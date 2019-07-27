@@ -4,7 +4,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Tag } from '../graphql.schema';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { TagsService } from './tags.service';
-import { GqlAuthGuard } from '../auth/gqlAuth.guard';
+import { GqlAuthGuard } from '../auth/gql-auth.guard';
 
 @Resolver('Tag')
 export class TagsResolver {
