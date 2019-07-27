@@ -1,0 +1,19 @@
+type Query {
+  getTags: [Tag]
+  tag(id: ID!): Tag
+}
+
+type Mutation {
+  createTag(createTagInput: CreateTagInput): Tag
+}
+
+type Tag {
+  id: Int
+  name: String
+  parentId: Int
+}
+
+input CreateTagInput {
+  name: String!
+  parentId: Int
+}
