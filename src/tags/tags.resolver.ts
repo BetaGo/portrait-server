@@ -1,20 +1,23 @@
-import { ParseIntPipe } from '@nestjs/common';
+import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { Tag } from '../graphql.schema';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { TagsService } from './tags.service';
+import { GqlAuthGuard } from '../auth/gqlAuth.guard';
 
 @Resolver('Tag')
 export class TagsResolver {
   constructor(private readonly tagsService: TagsService) {}
 
   @Query('getTags')
+  @UseGuards(GqlAuthGuard)
   async getTags() {
     return this.tagsService.findAll();
   }
 
   @Query('tag')
+  @UseGuards(GqlAuthGuard)
   async findOneById(
     @Args('id', ParseIntPipe)
     id: number,
@@ -23,6 +26,7 @@ export class TagsResolver {
   }
 
   @Mutation('createTag')
+  @UseGuards(GqlAuthGuard)
   async create(
     @Args('createTagInput')
     tag: CreateTagDto,
