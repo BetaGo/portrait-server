@@ -1,8 +1,25 @@
-import { Controller, Post, Get, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Render,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import * as _ from 'lodash';
+
+import { UserDomain } from '../users/user.entity';
+import { UsersService } from '../users/users.service';
+import { AuthService } from './auth.service';
+import { GithubProfile } from './github.strategy';
 
 @Controller('auth')
 export class AuthController {
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly authService: AuthService,
+  ) {}
   @Post()
   basicAuth() {
     return 'basic auth';
@@ -10,13 +27,30 @@ export class AuthController {
 
   @UseGuards(AuthGuard('github'))
   @Get('github')
-  githubAuth() {
+  githubAuthPost() {
     return 'github auth';
   }
 
   @UseGuards(AuthGuard('github'))
   @Get('github/callback')
-  githubAuthCallback(@Request() req: any) {
-    return req.user;
+  @Render('auth-callback')
+  async githubAuthCallback(@Request() req: any) {
+    const profile: GithubProfile = req.user;
+    let user = await this.usersService.findOne(profile.id, UserDomain.GITHUB);
+    if (!user) {
+      user = await this.usersService.create({
+        uid: profile.id,
+        displayName: profile.displayName,
+        username: profile.username,
+        avatar: _.get(profile, 'photos[0].value', ''),
+        email: _.get(profile, 'emails[0].value', ''),
+        domain: UserDomain.GITHUB,
+      });
+    }
+    const token = await this.authService.login(user);
+    return {
+      token: JSON.stringify(token),
+      user: JSON.stringify(user),
+    };
   }
 }

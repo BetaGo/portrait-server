@@ -1,25 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-github2';
+import { ConfigService } from '../config/config.service';
+import * as _ from 'lodash';
+
+export interface GithubProfile {
+  id: string;
+  displayName: string;
+  username: string;
+  emails: Array<{
+    value: string;
+  }>;
+  photos: Array<{
+    value: string;
+  }>;
+  provider: string;
+}
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private readonly config: ConfigService) {
     super({
-      clientID: 'b60fa8978d8f232f199b',
-      clientSecret: '2e988e56972b949bee8e1e9ed818cf00dd686dbb',
-      callbackURL: 'http://127.0.0.1:3000/auth/github/callback',
+      clientID: config.get('GITHUB_CLIENT_ID'),
+      clientSecret: config.get('GITHUB_CLIENT_SECRET'),
+      callbackURL: config.get('GITHUB_CALLBACK_URL'),
       scope: ['user:email'],
       failureRedirect: '/auth',
     });
   }
 
-  async validate(accessToken: any, refreshToken: any, profile: any) {
-    const user = {
-      accessToken,
-      refreshToken,
-      profile,
-    };
-    return user;
+  /**
+   * return 的值会挂载到 req.user 上
+   * @param accessToken
+   * @param refreshToken
+   * @param profile
+   */
+  async validate(
+    accessToken: string,
+    refreshToken: string,
+    profile: GithubProfile,
+  ) {
+    return profile;
   }
 }

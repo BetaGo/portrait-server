@@ -1,32 +1,24 @@
 import { Injectable } from '@nestjs/common';
-
-export type User = any;
+import { Repository, DeepPartial } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User, UserDomain } from './user.entity';
 
 @Injectable()
 export class UsersService {
-  private readonly users: User[];
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
-  constructor() {
-    this.users = [
-      {
-        userId: 1,
-        username: 'john',
-        password: 'changeme',
-      },
-      {
-        userId: 2,
-        username: 'chris',
-        password: 'secret',
-      },
-      {
-        userId: 3,
-        username: 'maria',
-        password: 'guess',
-      },
-    ];
+  async findOne(uid: string, domain: UserDomain): Promise<User | undefined> {
+    return this.userRepository.findOne({
+      uid,
+      domain,
+    });
   }
 
-  async findOne(username: string): Promise<User | undefined> {
-    return this.users.find(user => user.username === username);
+  async create(user: DeepPartial<User>): Promise<User> {
+    const newUser = this.userRepository.create(user);
+    return this.userRepository.save(newUser);
   }
 }

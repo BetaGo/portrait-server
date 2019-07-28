@@ -36,6 +36,12 @@ export class ConfigService {
       DATABASE_PORT: Joi.number().default(3306),
 
       SECRET: Joi.string().required(),
+
+      GITHUB_CLIENT_ID: Joi.string().required(),
+      GITHUB_CLIENT_SECRET: Joi.string().required(),
+      GITHUB_CALLBACK_URL: Joi.string()
+        .uri()
+        .required(),
     });
 
     const { error, value: validatedEnvConfig } = Joi.validate(
