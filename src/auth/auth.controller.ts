@@ -1,14 +1,8 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Render,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Render, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import * as _ from 'lodash';
 
+import { User as CurrentUser } from '../users/user.decorator';
 import { UserDomain } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
@@ -34,8 +28,7 @@ export class AuthController {
   @UseGuards(AuthGuard('github'))
   @Get('github/callback')
   @Render('auth-callback')
-  async githubAuthCallback(@Request() req: any) {
-    const profile: GithubProfile = req.user;
+  async githubAuthCallback(@CurrentUser() profile: GithubProfile) {
     let user = await this.usersService.findOne(profile.id, UserDomain.GITHUB);
     if (!user) {
       user = await this.usersService.create({

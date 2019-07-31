@@ -19,16 +19,6 @@ import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOpti
       installSubscriptionHandlers: true,
       context: ({ req }) => ({ req }),
     }),
-    // TypeOrmModule.forRoot({
-    //   type: 'mysql',
-    //   host: 'localhost',
-    //   port: 3306,
-    //   username: 'root',
-    //   password: '0000',
-    //   database: 'test',
-    //   entities: [join(__dirname, '**/**.entity{.ts,.js}')],
-    //   synchronize: true,
-    // }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (
