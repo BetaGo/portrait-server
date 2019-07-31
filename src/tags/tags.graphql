@@ -10,10 +10,8 @@ type Mutation {
 type Tag {
   id: Int
   name: String
-  parentId: Int
 }
 
 input CreateTagInput {
   name: String!
-  parentId: Int
 }

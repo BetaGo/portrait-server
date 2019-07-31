@@ -2,8 +2,8 @@ import { Controller, Get, Post, Render, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import * as _ from 'lodash';
 
-import { User as CurrentUser } from '../users/user.decorator';
-import { UserDomain } from '../users/user.entity';
+import { User as CurrentUser } from '../users/users.decorator';
+import { UserDomain } from '../users/users.entity';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { GithubProfile } from './github.strategy';

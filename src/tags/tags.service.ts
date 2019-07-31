@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
+import * as _ from 'lodash';
 
 import { Tag } from './tags.entity';
 
@@ -11,7 +12,12 @@ export class TagsService {
     private readonly tagRepository: Repository<Tag>,
   ) {}
 
-  findAll(): Promise<Tag[]> {
+  findAll(userId?: number): Promise<Tag[]> {
+    if (userId !== undefined) {
+      return this.tagRepository.find({
+        userId,
+      });
+    }
     return this.tagRepository.find();
   }
 
@@ -24,9 +30,10 @@ export class TagsService {
     return this.tagRepository.findOne(id);
   }
 
-  findOneByName(name: string): Promise<Tag | undefined> {
+  findOneByName(name: string, userId?: number): Promise<Tag | undefined> {
     return this.tagRepository.findOne({
       name,
+      userId,
     });
   }
 }
