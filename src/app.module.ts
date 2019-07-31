@@ -2,17 +2,19 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
+import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 
+import { ActionsModule } from './actions/actions.module';
 import { AuthModule } from './auth/auth.module';
+import { CategoriesModule } from './categories/categories.module';
+import { CommonModule } from './common/common.module';
 import { ConfigModule } from './config/config.module';
+import { ConfigService } from './config/config.service';
 import { TagsModule } from './tags/tags.module';
 import { UsersModule } from './users/users.module';
-import { ConfigService } from './config/config.service';
-import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 
 @Module({
   imports: [
-    TagsModule,
     ConfigModule,
     GraphQLModule.forRoot({
       typePaths: ['./**/*.graphql'],
@@ -36,7 +38,11 @@ import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOpti
       inject: [ConfigService],
     }),
     AuthModule,
+    CommonModule,
+    TagsModule,
     UsersModule,
+    CategoriesModule,
+    ActionsModule,
   ],
 })
 export class AppModule {}

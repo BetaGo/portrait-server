@@ -5,6 +5,14 @@
  */
 
 /* tslint:disable */
+export class CreateActionInput {
+    name: string;
+    tags: string[];
+    category: string;
+    description?: string;
+    createTime: Date;
+}
+
 export class CreateCategoryInput {
     name: string;
     parentId?: number;
@@ -12,6 +20,16 @@ export class CreateCategoryInput {
 
 export class CreateTagInput {
     name: string;
+}
+
+export class Action {
+    id: number;
+    name: string;
+    tags: Tag[];
+    category: Category;
+    description?: string;
+    userId: number;
+    createTime: Date;
 }
 
 export class Category {
@@ -22,12 +40,18 @@ export class Category {
 }
 
 export abstract class IMutation {
+    abstract createAction(createActionInput?: CreateActionInput): Action | Promise<Action>;
+
     abstract createCategory(createCategoryInput?: CreateCategoryInput): Category | Promise<Category>;
 
     abstract createTag(createTagInput?: CreateTagInput): Tag | Promise<Tag>;
 }
 
 export abstract class IQuery {
+    abstract getActions(): Action[] | Promise<Action[]>;
+
+    abstract action(id: string): Action | Promise<Action>;
+
     abstract getCategories(): Category[] | Promise<Category[]>;
 
     abstract category(id: string): Category | Promise<Category>;
@@ -38,6 +62,6 @@ export abstract class IQuery {
 }
 
 export class Tag {
-    id?: number;
-    name?: string;
+    id: number;
+    name: string;
 }

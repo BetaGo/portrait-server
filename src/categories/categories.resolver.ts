@@ -1,7 +1,7 @@
 import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { UserGql } from 'src/users/users.decorator';
-import { User } from 'src/users/users.entity';
+import { UserGql } from '../users/users.decorator';
+import { User } from '../users/users.entity';
 
 import { GqlAuthGuard } from '../auth/gql-auth.guard';
 import { CategoriesService } from './categories.service';

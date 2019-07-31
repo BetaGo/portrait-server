@@ -1,0 +1,28 @@
+scalar Date
+
+type Query {
+  getActions: [Action]
+  action(id: ID!): Action
+}
+
+type Mutation {
+  createAction(createActionInput: CreateActionInput): Action
+}
+
+type Action {
+  id: Int!
+  name: String!
+  tags: [Tag!]!
+  category: Category!
+  description: String
+  userId: Int!
+  createTime: Date!
+}
+
+input CreateActionInput {
+  name: String!
+  tags: [String!]!
+  category: String!
+  description: String
+  createTime: Date!
+}

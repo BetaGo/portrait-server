@@ -8,8 +8,8 @@ type Mutation {
 }
 
 type Tag {
-  id: Int
-  name: String
+  id: Int!
+  name: String!
 }
 
 input CreateTagInput {
