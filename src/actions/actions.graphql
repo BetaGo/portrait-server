@@ -12,17 +12,19 @@ type Mutation {
 type Action {
   id: Int!
   name: String!
+  value: Int!
   tags: [Tag!]!
   category: Category!
   description: String
   userId: Int!
-  createTime: Date!
+  date: Date!
 }
 
 input CreateActionInput {
   name: String!
-  tags: [String!]!
-  category: String!
+  value: Int!
+  tagIds: [Int!]!
+  categoryId: Int!
   description: String
-  createTime: Date!
+  date: Date!
 }

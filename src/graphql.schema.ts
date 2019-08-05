@@ -7,10 +7,11 @@
 /* tslint:disable */
 export class CreateActionInput {
     name: string;
-    tags: string[];
-    category: string;
+    value: number;
+    tagIds: number[];
+    categoryId: number;
     description?: string;
-    createTime: Date;
+    date: Date;
 }
 
 export class CreateCategoryInput {
@@ -25,11 +26,12 @@ export class CreateTagInput {
 export class Action {
     id: number;
     name: string;
+    value: number;
     tags: Tag[];
     category: Category;
     description?: string;
     userId: number;
-    createTime: Date;
+    date: Date;
 }
 
 export class Category {

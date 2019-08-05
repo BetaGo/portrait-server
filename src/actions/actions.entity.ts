@@ -8,6 +8,9 @@ export class Action {
   @Column({ length: 500 })
   name: string;
 
+  @Column()
+  value: number;
+
   @Column({
     type: 'simple-array',
   })
@@ -25,5 +28,5 @@ export class Action {
   userId: number;
 
   @Column()
-  createTime: Date;
+  date: Date;
 }
