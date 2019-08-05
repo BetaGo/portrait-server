@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository } from 'typeorm';
+import { DeepPartial, FindManyOptions, Repository } from 'typeorm';
+
 import { Category } from './categories.entity';
 
 @Injectable()
@@ -10,13 +11,8 @@ export class CategoriesService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
-  findAll(userId?: number): Promise<Category[]> {
-    if (userId !== undefined) {
-      return this.categoryRepository.find();
-    }
-    return this.categoryRepository.find({
-      userId,
-    });
+  findAll(option: FindManyOptions<Category>): Promise<Category[]> {
+    return this.categoryRepository.find(option);
   }
 
   create(category: DeepPartial<Category>): Promise<Category> {

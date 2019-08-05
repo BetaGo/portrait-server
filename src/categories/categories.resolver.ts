@@ -1,11 +1,13 @@
 import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import * as _ from 'lodash';
 import { UserGql } from '../users/users.decorator';
 import { User } from '../users/users.entity';
 
 import { GqlAuthGuard } from '../auth/gql-auth.guard';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category';
+import { MoreThan, Like, Any } from 'typeorm';
 
 @Resolver('Category')
 export class CategoriesResolver {
@@ -13,8 +15,24 @@ export class CategoriesResolver {
 
   @Query('getCategories')
   @UseGuards(GqlAuthGuard)
-  async getCategories(@UserGql() user: User) {
-    return this.categoriesService.findAll(user.id);
+  async getCategories(
+    @UserGql() user: User,
+    @Args('keyword') keyword: string,
+    @Args('pageSize') pageSize: number = 10,
+    @Args('cursor') cursor: number = 0,
+  ) {
+    const whereCondition = {
+      userId: user.id,
+      id: MoreThan(cursor),
+      name: Like(`${keyword}%`),
+    };
+    if (!keyword) {
+      delete whereCondition.name;
+    }
+    return this.categoriesService.findAll({
+      where: whereCondition,
+      take: pageSize,
+    });
   }
 
   @Query('category')

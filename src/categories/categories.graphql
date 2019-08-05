@@ -1,5 +1,5 @@
 type Query {
-  getCategories: [Category]
+  getCategories(pageSize: Int, keyword: String, cursor: Int): [Category]
   category(id: ID!): Category
 }
 

@@ -52,7 +52,7 @@ export abstract class IQuery {
 
     abstract action(id: string): Action | Promise<Action>;
 
-    abstract getCategories(): Category[] | Promise<Category[]>;
+    abstract getCategories(pageSize?: number, keyword?: string, cursor?: number): Category[] | Promise<Category[]>;
 
     abstract category(id: string): Category | Promise<Category>;
 
