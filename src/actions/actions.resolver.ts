@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { ActionsService } from './actions.service';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/gql-auth.guard';
@@ -16,7 +16,13 @@ export class ActionsResolver {
     @Args('createActionInput') action: CreateActionDto,
     @UserGql() user: User,
   ) {
-    console.log('action: ', action);
-    return this.actionsService.create({ ...action, userId: user.id });
+    const result = await this.actionsService.create({ ...action, user });
+    return this.actionsService.findOneWithRelation(result.id);
+  }
+
+  @Query('action')
+  @UseGuards(GqlAuthGuard)
+  async getAction(@Args('id') id: number) {
+    return this.actionsService.findOne(id);
   }
 }

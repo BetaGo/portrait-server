@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Action } from '../actions/actions.entity';
 
 @Entity()
 export class Category {
@@ -13,6 +14,9 @@ export class Category {
     nullable: true,
   })
   parentId: number;
+
+  @OneToMany(type => Action, action => action.category)
+  actions: Action[];
 
   @Column()
   userId: number;

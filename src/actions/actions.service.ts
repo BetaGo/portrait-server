@@ -14,7 +14,17 @@ export class ActionsService {
     return this.actionRepository.find();
   }
 
-  create(action: DeepPartial<Action>): Promise<Action> {
+  findOne(id: number): Promise<Action | undefined> {
+    return this.actionRepository.findOne(id);
+  }
+
+  findOneWithRelation(id: number): Promise<Action | undefined> {
+    return this.actionRepository.findOne(id, {
+      relations: ['category', 'tags'],
+    });
+  }
+
+  async create(action: DeepPartial<Action>): Promise<Action> {
     const newAction = this.actionRepository.create(action);
     return this.actionRepository.save(newAction);
   }

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Action } from '../actions/actions.entity';
 
 export enum UserDomain {
   'GITHUB' = 'github.com',
@@ -30,6 +31,9 @@ export class User {
     default: '',
   })
   avatar: string;
+
+  @OneToMany(type => Action, action => action.user)
+  actions: Action[];
 
   @Column({
     type: 'enum',
