@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository } from 'typeorm';
-import * as _ from 'lodash';
+import { DeepPartial, In, Repository } from 'typeorm';
 
 import { Tag } from './tags.entity';
 
@@ -19,6 +18,14 @@ export class TagsService {
       });
     }
     return this.tagRepository.find();
+  }
+
+  findByIds(ids: number[]): Promise<Tag[]> {
+    return this.tagRepository.find({
+      where: {
+        id: In(ids),
+      },
+    });
   }
 
   create(tag: DeepPartial<Tag>): Promise<Tag> {

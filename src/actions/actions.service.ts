@@ -11,7 +11,9 @@ export class ActionsService {
   ) {}
 
   findAll(): Promise<Action[]> {
-    return this.actionRepository.find();
+    return this.actionRepository.find({
+      relations: ['category', 'tags'],
+    });
   }
 
   findOne(id: number): Promise<Action | undefined> {
