@@ -42,6 +42,7 @@ export class AuthController {
     }
     const token = await this.authService.login(user);
     return {
+      result: JSON.stringify({ success: true }),
       token: JSON.stringify(token),
       user: JSON.stringify(user),
     };

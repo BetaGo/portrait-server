@@ -1,4 +1,5 @@
-<!DOCTYPE html56="en">
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
@@ -10,17 +11,38 @@
 <body>
   <div id="token">{{ token }}</div>
   <div id="user">{{ user }}</div>
+  <div id="result">{{ result }}</div>
   <script>
     const tokenNode = document.getElementById('token');
     const userNode = document.getElementById('user');
+    const resultNode = document.getElementById('result');
     const token = JSON.parse(tokenNode.innerText);
     const user = JSON.parse(userNode.innerText);
+    const result = JSON.parse(resultNode.innerText);
+    function closePageWithDelay (delay) {
+        window.setTimeout(() => {
+            closePage()
+        }, delay)
+    }
 
-    localStorage.setItem('token', tokenNode.innerText);
-    localStorage.setItem('user', userNode.innerHTML);
+    function closePage () {
+        if (window.opener) {
+            window.close()
+        } else {
+            window.history.go(-1)
+        }
+    }
+    if (result.success) {
+        document.title = "Login Success!";
+        localStorage.setItem('token', token.access_token);
+        localStorage.setItem('user', userNode.innerHTML);
+        // closePageWithDelay(500);
+    } else {
+      document.title = "Login Fail!";
+      closePageWithDelay(1000);
+    }
 
-    window.location.replace('/')
   </script>
 </body>
 
-</ht"en">
+</html>
