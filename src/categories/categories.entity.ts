@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Action } from '../actions/actions.entity';
+import { Record } from '../records/records.entity';
 
 @Entity()
 export class Category {
@@ -15,8 +15,8 @@ export class Category {
   })
   parentId: number;
 
-  @OneToMany(type => Action, action => action.category)
-  actions: Action[];
+  @OneToMany(type => Record, action => action.category)
+  actions: Record[];
 
   @Column()
   userId: number;

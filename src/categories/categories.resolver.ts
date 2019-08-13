@@ -1,10 +1,10 @@
 import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import * as _ from 'lodash';
-import { UserGql } from '../users/users.decorator';
+import { UserGQL } from '../users/users.decorator';
 import { User } from '../users/users.entity';
 
-import { GqlAuthGuard } from '../auth/gql-auth.guard';
+import { GQLAuthGuard } from '../auth/graphql-auth-guard.service';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category';
 import { MoreThan, Like, Any } from 'typeorm';
@@ -14,9 +14,9 @@ export class CategoriesResolver {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Query('getCategories')
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(GQLAuthGuard)
   async getCategories(
-    @UserGql() user: User,
+    @UserGQL() user: User,
     @Args('keyword') keyword: string,
     @Args('pageSize') pageSize: number = 10,
     @Args('cursor') cursor: number = 0,
@@ -36,16 +36,16 @@ export class CategoriesResolver {
   }
 
   @Query('category')
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(GQLAuthGuard)
   async findOneById(@Args('id', ParseIntPipe) id: number) {
     return this.categoriesService.findOneById(id);
   }
 
   @Mutation('createCategory')
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(GQLAuthGuard)
   async createCategory(
     @Args('createCategoryInput') category: CreateCategoryDto,
-    @UserGql() user: User,
+    @UserGQL() user: User,
   ) {
     return this.categoriesService.create({ ...category, userId: user.id });
   }

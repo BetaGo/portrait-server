@@ -1,9 +1,9 @@
 import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { UserGql } from '../users/users.decorator';
+import { UserGQL } from '../users/users.decorator';
 import { User } from '../users/users.entity';
 
-import { GqlAuthGuard } from '../auth/gql-auth.guard';
+import { GQLAuthGuard } from '../auth/graphql-auth-guard.service';
 import { Tag } from '../graphql.schema';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { TagsService } from './tags.service';
@@ -13,13 +13,13 @@ export class TagsResolver {
   constructor(private readonly tagsService: TagsService) {}
 
   @Query('getTags')
-  @UseGuards(GqlAuthGuard)
-  async getTags(@UserGql() user: User) {
+  @UseGuards(GQLAuthGuard)
+  async getTags(@UserGQL() user: User) {
     return this.tagsService.findAll(user.id);
   }
 
   @Query('tag')
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(GQLAuthGuard)
   async findOneById(
     @Args('id', ParseIntPipe) id: number,
   ): Promise<Tag | undefined> {
@@ -27,10 +27,10 @@ export class TagsResolver {
   }
 
   @Mutation('createTag')
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(GQLAuthGuard)
   async create(
     @Args('createTagInput') tag: CreateTagDto,
-    @UserGql() user: User,
+    @UserGQL() user: User,
   ): Promise<Tag> {
     const existTag = await this.tagsService.findOneByName(tag.name, user.id);
     if (existTag) {

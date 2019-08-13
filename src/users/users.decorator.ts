@@ -7,6 +7,6 @@ export const User = createParamDecorator((data: string, req) => {
   return data ? req.user && req.user[data] : req.user;
 });
 
-export const UserGql = createParamDecorator(
+export const UserGQL = createParamDecorator(
   (data, [root, args, ctx, info]) => ctx.req.user,
 );

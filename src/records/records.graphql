@@ -1,15 +1,15 @@
 scalar Date
 
 type Query {
-  getActions: [Action]
-  action(id: ID!): Action
+  getRecords: [Record]
+  record(id: ID!): Record
 }
 
 type Mutation {
-  createAction(createActionInput: CreateActionInput): Action
+  createRecord(createRecordInput: CreateRecordInput): Record
 }
 
-type Action {
+type Record {
   id: Int!
   name: String!
   value: Int!
@@ -20,7 +20,7 @@ type Action {
   date: Date!
 }
 
-input CreateActionInput {
+input CreateRecordInput {
   name: String!
   value: Int!
   tagIds: [Int!]!

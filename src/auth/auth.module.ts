@@ -8,7 +8,7 @@ import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { GithubStrategy } from './github.strategy';
-import { GqlAuthGuard } from './gql-auth.guard';
+import { GQLAuthGuard } from './graphql-auth-guard.service';
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({
@@ -29,7 +29,7 @@ import { JwtStrategy } from './jwt.strategy';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, JwtStrategy, GqlAuthGuard, GithubStrategy],
+  providers: [AuthService, JwtStrategy, GQLAuthGuard, GithubStrategy],
   exports: [AuthService],
   controllers: [AuthController],
 })

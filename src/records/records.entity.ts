@@ -11,7 +11,7 @@ import { Category } from '../categories/categories.entity';
 import { Tag } from '../tags/tags.entity';
 
 @Entity()
-export class Action {
+export class Record {
   @PrimaryGeneratedColumn()
   id: number;
 
