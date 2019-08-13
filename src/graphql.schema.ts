@@ -57,6 +57,8 @@ export abstract class IQuery {
   abstract getTags(): Tag[] | Promise<Tag[]>;
 
   abstract tag(id: string): Tag | Promise<Tag>;
+
+  abstract user(id: string): User | Promise<User>;
 }
 
 export class Record {
@@ -73,4 +75,15 @@ export class Record {
 export class Tag {
   id: number;
   name: string;
+}
+
+export class User {
+  id: number;
+  uid?: number;
+  username?: string;
+  displayName?: string;
+  email?: string;
+  avatar?: string;
+  domain: string;
+  phone?: string;
 }

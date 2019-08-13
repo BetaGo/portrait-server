@@ -1,0 +1,14 @@
+type User {
+    id: Int!
+    uid: Int
+    username: String
+    displayName: String
+    email: String
+    avatar: String
+    domain: String!
+    phone: String
+}
+
+type Query {
+    user(id: ID!): User
+}

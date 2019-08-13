@@ -9,7 +9,7 @@ import { TagsService } from '../tags/tags.service';
 import { Record } from './records.entity';
 
 @Resolver('Record')
-export class ActionsResolver {
+export class RecordsResolver {
   constructor(
     private readonly recordsService: RecordsService,
     private readonly tagsService: TagsService,
