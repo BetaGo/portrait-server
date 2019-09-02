@@ -1,3 +1,4 @@
+
 /** ------------------------------------------------------
  * THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
  * -------------------------------------------------------
@@ -5,85 +6,96 @@
 
 /* tslint:disable */
 export class CreateCategoryInput {
-  name: string;
-  parentId?: number;
+    name: string;
+    parentId?: number;
+}
+
+export class CreateGeolocationInput {
+    latitude: number;
+    longitude: number;
+    date: Date;
 }
 
 export class CreateRecordInput {
-  name: string;
-  value: number;
-  tagIds: number[];
-  categoryId: number;
-  description?: string;
-  date: Date;
+    name: string;
+    value: number;
+    tagIds: number[];
+    categoryId: number;
+    description?: string;
+    date: Date;
 }
 
 export class CreateTagInput {
-  name: string;
+    name: string;
 }
 
 export class Category {
-  id?: number;
-  name?: string;
-  userId?: number;
-  parentId?: number;
+    id?: number;
+    name?: string;
+    userId?: number;
+    parentId?: number;
+}
+
+export class Geolocation {
+    id: number;
+    latitude: number;
+    longitude: number;
+    date: Date;
 }
 
 export abstract class IMutation {
-  abstract createCategory(
-    createCategoryInput?: CreateCategoryInput,
-  ): Category | Promise<Category>;
+    abstract createCategory(createCategoryInput?: CreateCategoryInput): Category | Promise<Category>;
 
-  abstract createRecord(
-    createRecordInput?: CreateRecordInput,
-  ): Record | Promise<Record>;
+    abstract createGeolocation(createGeolocationInput?: CreateGeolocationInput): Geolocation | Promise<Geolocation>;
 
-  abstract createTag(createTagInput?: CreateTagInput): Tag | Promise<Tag>;
+    abstract createRecord(createRecordInput?: CreateRecordInput): Record | Promise<Record>;
+
+    abstract createTag(createTagInput?: CreateTagInput): Tag | Promise<Tag>;
 }
 
 export abstract class IQuery {
-  abstract getCategories(
-    pageSize?: number,
-    keyword?: string,
-    cursor?: number,
-  ): Category[] | Promise<Category[]>;
+    abstract getCategories(pageSize?: number, keyword?: string, cursor?: number): Category[] | Promise<Category[]>;
 
-  abstract category(id: string): Category | Promise<Category>;
+    abstract category(id: string): Category | Promise<Category>;
 
-  abstract getRecords(): Record[] | Promise<Record[]>;
+    abstract getGeolocation(from?: Date, to?: Date): Geolocation[] | Promise<Geolocation[]>;
 
-  abstract record(id: string): Record | Promise<Record>;
+    abstract geolocation(): Geolocation | Promise<Geolocation>;
 
-  abstract getTags(): Tag[] | Promise<Tag[]>;
+    abstract getRecords(): Record[] | Promise<Record[]>;
 
-  abstract tag(id: string): Tag | Promise<Tag>;
+    abstract record(id: string): Record | Promise<Record>;
 
-  abstract user(id: string): User | Promise<User>;
+    abstract getTags(): Tag[] | Promise<Tag[]>;
+
+    abstract tag(id: string): Tag | Promise<Tag>;
+
+    abstract user(id: string): User | Promise<User>;
 }
 
 export class Record {
-  id: number;
-  name: string;
-  value: number;
-  tags: Tag[];
-  category: Category;
-  description?: string;
-  userId: number;
-  date: Date;
+    id: number;
+    name: string;
+    value: number;
+    tags: Tag[];
+    category: Category;
+    description?: string;
+    userId: number;
+    date: Date;
 }
 
 export class Tag {
-  id: number;
-  name: string;
+    id: number;
+    name: string;
 }
 
 export class User {
-  id: number;
-  uid?: number;
-  username?: string;
-  displayName?: string;
-  email?: string;
-  avatar?: string;
-  domain: string;
-  phone?: string;
+    id: number;
+    uid?: number;
+    username?: string;
+    displayName?: string;
+    email?: string;
+    avatar?: string;
+    domain: string;
+    phone?: string;
 }

@@ -1,0 +1,23 @@
+scalar Date
+
+type Query {
+  getGeolocation(from: Date, to: Date): [Geolocation]
+  geolocation: Geolocation
+}
+
+type Mutation {
+  createGeolocation(createGeolocationInput: CreateGeolocationInput): Geolocation
+}
+
+type Geolocation {
+  id: Int!
+  latitude: Float!
+  longitude: Float!
+  date: Date!
+}
+
+input CreateGeolocationInput {
+  latitude: Float!
+  longitude: Float!
+  date: Date!
+}

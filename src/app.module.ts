@@ -12,6 +12,7 @@ import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { TagsModule } from './tags/tags.module';
 import { UsersModule } from './users/users.module';
+import { GeolocationModule } from './geolocation/geolocation.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     CategoriesModule,
     RecordsModule,
+    GeolocationModule,
   ],
 })
 export class AppModule {}

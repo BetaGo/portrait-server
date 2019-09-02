@@ -1,3 +1,4 @@
+import { Geolocation } from '../geolocation/geolocation.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Record } from '../records/records.entity';
 
@@ -34,6 +35,9 @@ export class User {
 
   @OneToMany(type => Record, record => record.user)
   actions: Record[];
+
+  @OneToMany(type => Geolocation, geolocation => geolocation.user)
+  geolocation: Geolocation[];
 
   @Column({
     type: 'enum',
