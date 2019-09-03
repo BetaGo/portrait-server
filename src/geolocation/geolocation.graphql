@@ -9,6 +9,10 @@ type Mutation {
   createGeolocation(createGeolocationInput: CreateGeolocationInput): Geolocation
 }
 
+type Subscription {
+  geolocationCreated: Geolocation
+}
+
 type Geolocation {
   id: Int!
   latitude: Float!

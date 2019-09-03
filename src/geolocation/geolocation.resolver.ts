@@ -1,10 +1,13 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
+import { PubSub } from 'graphql-subscriptions';
 import { GQLAuthGuard } from '../auth/graphql-auth-guard.service';
 import { GeolocationService } from './geolocation.service';
 import { CreateGeolocationDto } from './dto/create-geolocation';
 import { UserGQL } from '../users/users.decorator';
 import { User } from '../users/users.entity';
+
+const pubSub = new PubSub();
 
 @Resolver('geolocation')
 export class GeolocationResolver {
@@ -29,13 +32,20 @@ export class GeolocationResolver {
 
   @Mutation('createGeolocation')
   @UseGuards(GQLAuthGuard)
-  createGeolocation(
+  async createGeolocation(
     @Args('createGeolocationInput')
-    geolocation: CreateGeolocationDto,
+    args: CreateGeolocationDto,
 
     @UserGQL()
     user: User,
   ) {
-    return this.geolocationServices.createGeolocation({...geolocation, user});
+    const geolocation = await this.geolocationServices.createGeolocation({...args, user});
+    pubSub.publish('catCreated', { geolocationCreated: geolocation });
+    return geolocation;
+  }
+
+  @Subscription('geolocationCreated')
+  geolocationCreated() {
+    return pubSub.asyncIterator('geolocationCreated');
   }
 }

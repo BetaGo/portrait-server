@@ -84,6 +84,10 @@ export class Record {
     date: Date;
 }
 
+export abstract class ISubscription {
+    abstract geolocationCreated(): Geolocation | Promise<Geolocation>;
+}
+
 export class Tag {
     id: number;
     name: string;
