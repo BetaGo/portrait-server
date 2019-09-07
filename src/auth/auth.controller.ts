@@ -21,6 +21,15 @@ import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { GithubProfile } from './github.strategy';
 import { Response, Request } from 'express';
+import * as Joi from '@hapi/joi';
+
+const sessionSchema = Joi.object().keys({
+  redirect_uri: Joi.string().uri({
+    scheme: /https?/,
+  }).required(),
+}).options({
+  stripUnknown: true,
+});
 
 @Controller('auth')
 export class AuthController {
@@ -42,11 +51,12 @@ export class AuthController {
     @Query('redirect_uri') redirectURI: string = '',
     @Req() request: Request & { session: any },
   ) {
-    if (!redirectURI) {
-      throw new BadRequestException('redirect_uri can not be empty');
+    request.session.redirect_uri = redirectURI;
+    const { error } = sessionSchema.validate(request.session);
+    if (error) {
+      throw new BadRequestException(error.message);
     }
     if (authType === 'github') {
-      request.session.redirect_uri = redirectURI;
       return { url: '/auth/github/callback' };
     }
   }
@@ -58,10 +68,11 @@ export class AuthController {
     @CurrentUser() profile: GithubProfile,
     @Req() request: Request & { session: any },
   ) {
-    const redirectURI = request.session.redirect_uri;
-    if (!redirectURI) {
-      throw new BadRequestException();
+    const { error } = sessionSchema.validate(request.session);
+    if (error) {
+      throw new BadRequestException(error.message);
     }
+    const redirectURI = request.session.redirect_uri;
     let user = await this.usersService.findOne(profile.id, UserDomain.GITHUB);
     if (!user) {
       user = await this.usersService.create({
