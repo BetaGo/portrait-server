@@ -26,7 +26,7 @@ import * as Joi from '@hapi/joi';
 const sessionSchema = Joi.object().keys({
   redirect_uri: Joi.string().uri({
     scheme: /https?/,
-  }).required(),
+  }).allow(''),
 }).options({
   stripUnknown: true,
 });
@@ -42,6 +42,13 @@ export class AuthController {
   @Render('login')
   login() {
     return {};
+  }
+
+  @Get('callback')
+  callback(
+    @Req() req: Request,
+  ) {
+    return req.header('Host');
   }
 
   @Get(':type')
@@ -63,7 +70,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard('github'))
   @Get('github/callback')
-  @Redirect('/auth')
+  @Redirect('/auth/callback')
   async githubAuthCallback(
     @CurrentUser() profile: GithubProfile,
     @Req() request: Request & { session: any },
@@ -85,11 +92,20 @@ export class AuthController {
       });
     }
     const token = await this.authService.login(user);
-    const parsed = new Url(redirectURI);
-    parsed.set('query', { token: token.access_token });
-    return {
-      url: parsed.toString(),
-    };
+    if (redirectURI) {
+      const parsed = new Url(redirectURI);
+      parsed.set('query', { token: token.access_token });
+      return {
+        url: parsed.toString(),
+      };
+    } else {
+      const baseUrl = `${request.protocol}://${request.header('Host')}`;
+      const parsed = new Url(baseUrl);
+      parsed.set('query', { token: token.access_token });
+      return {
+        url: parsed.toString(),
+      };
+    }
     // return {
     //   result: JSON.stringify({ success: true }),
     //   token: JSON.stringify(token),
