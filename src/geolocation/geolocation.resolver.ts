@@ -39,8 +39,11 @@ export class GeolocationResolver {
     @UserGQL()
     user: User,
   ) {
-    const geolocation = await this.geolocationServices.createGeolocation({...args, user});
-    pubSub.publish('catCreated', { geolocationCreated: geolocation });
+    const geolocation = await this.geolocationServices.createGeolocation({
+      ...args,
+      user,
+    });
+    pubSub.publish('geolocationCreated', { geolocationCreated: geolocation });
     return geolocation;
   }
 
