@@ -6,7 +6,11 @@ type Query {
 }
 
 type Mutation {
-  createGeolocation(createGeolocationInput: CreateGeolocationInput): Geolocation
+  createGeolocation(
+    latitude: Float!
+    longitude: Float!
+    date: Date!
+  ): Geolocation
 }
 
 type Subscription {

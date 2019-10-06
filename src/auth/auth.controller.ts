@@ -23,13 +23,17 @@ import { GithubProfile } from './github.strategy';
 import { Response, Request } from 'express';
 import * as Joi from '@hapi/joi';
 
-const sessionSchema = Joi.object().keys({
-  redirect_uri: Joi.string().uri({
-    scheme: /https?/,
-  }).allow(''),
-}).options({
-  stripUnknown: true,
-});
+const sessionSchema = Joi.object()
+  .keys({
+    redirect_uri: Joi.string()
+      .uri({
+        scheme: /https?/,
+      })
+      .allow(''),
+  })
+  .options({
+    stripUnknown: true,
+  });
 
 @Controller('auth')
 export class AuthController {
@@ -45,9 +49,7 @@ export class AuthController {
   }
 
   @Get('callback')
-  callback(
-    @Req() req: Request,
-  ) {
+  callback(@Req() req: Request) {
     return req.header('Host');
   }
 
@@ -99,7 +101,9 @@ export class AuthController {
         url: parsed.toString(),
       };
     } else {
-      const baseUrl = `${request.protocol}://${request.header('Host')}`;
+      const baseUrl = `${request.protocol}://${request.header(
+        'Host',
+      )}/auth/callback`;
       const parsed = new Url(baseUrl);
       parsed.set('query', { token: token.access_token });
       return {

@@ -7,10 +7,10 @@ export class Geolocation {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({type: 'double'})
   latitude: number;
 
-  @Column()
+  @Column({type: 'double'})
   longitude: number;
 
   @ManyToOne(type => User, user => user.geolocation)

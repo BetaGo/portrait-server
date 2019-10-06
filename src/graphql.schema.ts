@@ -46,7 +46,7 @@ export class Geolocation {
 export abstract class IMutation {
     abstract createCategory(createCategoryInput?: CreateCategoryInput): Category | Promise<Category>;
 
-    abstract createGeolocation(createGeolocationInput?: CreateGeolocationInput): Geolocation | Promise<Geolocation>;
+    abstract createGeolocation(latitude: number, longitude: number, date: Date): Geolocation | Promise<Geolocation>;
 
     abstract createRecord(createRecordInput?: CreateRecordInput): Record | Promise<Record>;
 
@@ -70,7 +70,7 @@ export abstract class IQuery {
 
     abstract tag(id: string): Tag | Promise<Tag>;
 
-    abstract user(id: string): User | Promise<User>;
+    abstract user(): User | Promise<User>;
 }
 
 export class Record {

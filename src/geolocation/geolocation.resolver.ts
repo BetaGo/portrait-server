@@ -33,14 +33,22 @@ export class GeolocationResolver {
   @Mutation('createGeolocation')
   @UseGuards(GQLAuthGuard)
   async createGeolocation(
-    @Args('createGeolocationInput')
-    args: CreateGeolocationDto,
+    @Args('latitude')
+    latitude: number,
+
+    @Args('longitude')
+    longitude: number,
+
+    @Args('date')
+    date: Date,
 
     @UserGQL()
     user: User,
   ) {
     const geolocation = await this.geolocationServices.createGeolocation({
-      ...args,
+      latitude,
+      longitude,
+      date,
       user,
     });
     pubSub.publish('geolocationCreated', { geolocationCreated: geolocation });

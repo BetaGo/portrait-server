@@ -2,6 +2,8 @@ import { Args, Query, Resolver } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { UseGuards } from '@nestjs/common';
 import { GQLAuthGuard } from '../auth/graphql-auth-guard.service';
+import { UserGQL } from './users.decorator';
+import { User } from './users.entity';
 
 @Resolver('user')
 export class UsersResolver {
@@ -9,7 +11,7 @@ export class UsersResolver {
 
   @Query('user')
   @UseGuards(GQLAuthGuard)
-  findUser(@Args('id') id: number) {
-    return this.usersService.findOneById(id);
+  findUser(@UserGQL() user: User) {
+    return this.usersService.findOneById(user.id);
   }
 }
