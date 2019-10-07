@@ -3,7 +3,6 @@ import { UseGuards } from '@nestjs/common';
 import { PubSub } from 'graphql-subscriptions';
 import { GQLAuthGuard } from '../auth/graphql-auth-guard.service';
 import { GeolocationService } from './geolocation.service';
-import { CreateGeolocationDto } from './dto/create-geolocation';
 import { UserGQL } from '../users/users.decorator';
 import { User } from '../users/users.entity';
 
@@ -39,8 +38,11 @@ export class GeolocationResolver {
     @Args('longitude')
     longitude: number,
 
-    @Args('date')
-    date: Date,
+    @Args('altitude')
+    altitude: number,
+
+    @Args('time')
+    time: Date,
 
     @UserGQL()
     user: User,
@@ -48,7 +50,8 @@ export class GeolocationResolver {
     const geolocation = await this.geolocationServices.createGeolocation({
       latitude,
       longitude,
-      date,
+      altitude,
+      time,
       user,
     });
     pubSub.publish('geolocationCreated', { geolocationCreated: geolocation });

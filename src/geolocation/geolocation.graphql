@@ -9,7 +9,11 @@ type Mutation {
   createGeolocation(
     latitude: Float!
     longitude: Float!
-    date: Date!
+    altitude: Float!
+    """
+    13位时间戳
+    """
+    time: Date!
   ): Geolocation
 }
 
@@ -21,11 +25,9 @@ type Geolocation {
   id: Int!
   latitude: Float!
   longitude: Float!
-  date: Date!
-}
-
-input CreateGeolocationInput {
-  latitude: Float!
-  longitude: Float!
-  date: Date!
+  altitude: Float!
+  """
+  13位时间戳
+  """
+  time: Date!
 }

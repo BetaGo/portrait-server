@@ -3,7 +3,7 @@ import { Kind, ValueNode } from 'graphql';
 
 @Scalar('Date')
 export class DateScalar implements CustomScalar<number, Date | null> {
-  description = 'Date custom scalar type';
+  description = 'Date custom scalar type, 13 bit timestamp.';
 
   parseValue(value: number): Date {
     return new Date(value); // value from the client
@@ -15,7 +15,7 @@ export class DateScalar implements CustomScalar<number, Date | null> {
 
   parseLiteral(ast: ValueNode): Date | null {
     if (ast.kind === Kind.INT) {
-      return new Date(Number(ast.value));
+      return new Date(parseInt(ast.value, 10));
     }
     return null;
   }

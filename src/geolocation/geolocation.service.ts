@@ -13,10 +13,10 @@ export class GeolocationService {
   async getGeolocationByDateRange(from: Date, to: Date) {
     return this.geolocationRepository.find({
       where: {
-        date: Between(from, to),
+        time: Between(from, to),
       },
       order: {
-        date: 'DESC',
+        time: 'DESC',
       },
     });
   }
@@ -29,7 +29,7 @@ export class GeolocationService {
   async getLatestGeolocation() {
     return this.geolocationRepository.findOne({
       order: {
-        date: 'DESC',
+        time: 'DESC',
       },
     });
   }

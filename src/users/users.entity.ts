@@ -1,6 +1,6 @@
-import { Geolocation } from '../geolocation/geolocation.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Record } from '../records/records.entity';
+
+import { Geolocation } from '../geolocation/geolocation.entity';
 
 export enum UserDomain {
   'GITHUB' = 'github.com',
@@ -32,9 +32,6 @@ export class User {
     default: '',
   })
   avatar: string;
-
-  @OneToMany(type => Record, record => record.user)
-  actions: Record[];
 
   @OneToMany(type => Geolocation, geolocation => geolocation.user)
   geolocation: Geolocation[];

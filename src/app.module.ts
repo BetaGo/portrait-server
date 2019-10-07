@@ -4,15 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 
-import { RecordsModule } from './records/records.module';
 import { AuthModule } from './auth/auth.module';
-import { CategoriesModule } from './categories/categories.module';
 import { CommonModule } from './common/common.module';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
-import { TagsModule } from './tags/tags.module';
-import { UsersModule } from './users/users.module';
 import { GeolocationModule } from './geolocation/geolocation.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -40,10 +37,7 @@ import { GeolocationModule } from './geolocation/geolocation.module';
     }),
     AuthModule,
     CommonModule,
-    TagsModule,
     UsersModule,
-    CategoriesModule,
-    RecordsModule,
     GeolocationModule,
   ],
 })
