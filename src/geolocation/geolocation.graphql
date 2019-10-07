@@ -10,9 +10,6 @@ type Mutation {
     latitude: Float!
     longitude: Float!
     altitude: Float!
-    """
-    13位时间戳
-    """
     time: Date!
   ): Geolocation
 }
@@ -26,8 +23,5 @@ type Geolocation {
   latitude: Float!
   longitude: Float!
   altitude: Float!
-  """
-  13位时间戳
-  """
   time: Date!
 }
