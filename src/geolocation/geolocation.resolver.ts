@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { PubSub } from 'graphql-subscriptions';
-import { GQLAuthGuard } from '../auth/graphql-auth-guard.service';
+import { GQLAuthGuard } from '../auth/graphql-auth.guard';
 import { GeolocationService } from './geolocation.service';
 import { UserGQL } from '../users/users.decorator';
 import { User } from '../users/users.entity';
