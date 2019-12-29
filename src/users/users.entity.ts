@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Geolocation } from '../geolocation/geolocation.entity';
+import { Murmur } from '../murmur/murmur.entity';
 
 export enum UserDomain {
   'GITHUB' = 'github.com',
@@ -33,8 +34,17 @@ export class User {
   })
   avatar: string;
 
-  @OneToMany(type => Geolocation, geolocation => geolocation.user)
+  @OneToMany(
+    type => Geolocation,
+    geolocation => geolocation.user,
+  )
   geolocation: Geolocation[];
+
+  @OneToMany(
+    type => Murmur,
+    murmur => murmur.user,
+  )
+  murmur: Murmur[];
 
   @Column({
     type: 'enum',

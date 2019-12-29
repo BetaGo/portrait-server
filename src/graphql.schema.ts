@@ -13,8 +13,16 @@ export class Geolocation {
     time: Date;
 }
 
+export class Murmur {
+    id: number;
+    text: string;
+    time: Date;
+}
+
 export abstract class IMutation {
     abstract createGeolocation(latitude: number, longitude: number, altitude: number, time: Date): Geolocation | Promise<Geolocation>;
+
+    abstract createMurmur(text: string): Murmur | Promise<Murmur>;
 }
 
 export abstract class IQuery {
