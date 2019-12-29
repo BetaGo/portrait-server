@@ -8,7 +8,7 @@ import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { GithubStrategy } from './github.strategy';
-import { GQLAuthGuard } from './graphql-auth-guard.service';
+import { GQLAuthGuard } from './graphql-auth.guard';
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({

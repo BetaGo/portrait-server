@@ -1,17 +1,16 @@
+import * as Joi from '@hapi/joi';
 import {
   BadRequestException,
   Controller,
   Get,
   Param,
-  Post,
   Query,
   Redirect,
-  Render,
   Req,
-  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 import * as _ from 'lodash';
 import * as Url from 'url-parse';
 
@@ -20,8 +19,6 @@ import { UserDomain } from '../users/users.entity';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { GithubProfile } from './github.strategy';
-import { Response, Request } from 'express';
-import * as Joi from '@hapi/joi';
 
 const sessionSchema = Joi.object()
   .keys({
@@ -41,12 +38,6 @@ export class AuthController {
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
   ) {}
-
-  @Get()
-  @Render('login')
-  login() {
-    return {};
-  }
 
   @Get('callback')
   callback(@Req() req: Request) {
@@ -110,10 +101,5 @@ export class AuthController {
         url: parsed.toString(),
       };
     }
-    // return {
-    //   result: JSON.stringify({ success: true }),
-    //   token: JSON.stringify(token),
-    //   user: JSON.stringify(user),
-    // };
   }
 }
