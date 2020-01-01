@@ -2,6 +2,8 @@ import * as dotenv from 'dotenv';
 import * as Joi from '@hapi/joi';
 import * as fs from 'fs';
 
+import { dotenvFiles } from './config.env';
+
 export interface EnvConfig {
   [key: string]: string;
 }
@@ -9,8 +11,14 @@ export interface EnvConfig {
 export class ConfigService {
   private readonly envConfig: EnvConfig;
 
-  constructor(filePath: string) {
-    const config = dotenv.parse(fs.readFileSync(filePath));
+  constructor() {
+    const config = dotenvFiles.reduce((a, b) => {
+      let conf = {};
+      if (fs.existsSync(b as string)) {
+        conf = dotenv.parse(fs.readFileSync(b as string));
+      }
+      return { ...conf, ...a };
+    }, {});
     this.envConfig = this.validateInput(config);
   }
 
