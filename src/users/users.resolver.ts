@@ -1,6 +1,7 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { UseGuards } from '@nestjs/common';
+import * as _ from 'lodash';
 import { GQLAuthGuard } from '../auth/graphql-auth.guard';
 import { UserGQL } from './users.decorator';
 import { User } from './users.entity';
@@ -78,11 +79,15 @@ export class UsersResolver {
       user,
     });
 
-    if (updateResult.affected === 1) {
+    const affected =
+      updateResult.affected || _.get(updateResult, 'raw.affectedRows');
+
+    if (affected === 1) {
       return {
         success: true,
+        message: '更新成功',
       };
-    } else if (updateResult.affected === 0) {
+    } else if (affected === 0) {
       return {
         success: false,
         message: '数据不存在',
