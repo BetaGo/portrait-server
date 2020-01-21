@@ -9,7 +9,6 @@ import { CommonModule } from './common/common.module';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { GeolocationModule } from './geolocation/geolocation.module';
-import { MurmurModule } from './murmur/murmur.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -24,7 +23,6 @@ import { UsersModule } from './users/users.module';
     CommonModule,
     UsersModule,
     GeolocationModule,
-    MurmurModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (

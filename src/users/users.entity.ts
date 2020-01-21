@@ -1,7 +1,14 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 import { Geolocation } from '../geolocation/geolocation.entity';
-import { Murmur } from '../murmur/murmur.entity';
+import { UserWord } from './user-words/user-words.entity';
 
 export enum UserDomain {
   'GITHUB' = 'github.com',
@@ -15,7 +22,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ comment: '第三方登录提供的id' })
   uid: string;
 
   @Column({ length: 500 })
@@ -34,18 +41,6 @@ export class User {
   })
   avatar: string;
 
-  @OneToMany(
-    type => Geolocation,
-    geolocation => geolocation.user,
-  )
-  geolocation: Geolocation[];
-
-  @OneToMany(
-    type => Murmur,
-    murmur => murmur.user,
-  )
-  murmur: Murmur[];
-
   @Column({
     type: 'enum',
     enum: UserDomain,
@@ -57,4 +52,22 @@ export class User {
     default: '',
   })
   phone: string;
+
+  @CreateDateColumn()
+  createdDate: Date;
+
+  @UpdateDateColumn()
+  updatedDate: Date;
+
+  @OneToMany(
+    type => Geolocation,
+    geolocation => geolocation.user,
+  )
+  geolocation: Geolocation[];
+
+  @OneToMany(
+    type => UserWord,
+    userWord => userWord.user,
+  )
+  words: UserWord[];
 }

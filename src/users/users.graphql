@@ -1,14 +1,75 @@
 type User {
-    id: Int!
-    uid: Int
-    username: String
-    displayName: String
-    email: String
-    avatar: String
-    domain: String!
-    phone: String
+  id: Int!
+  uid: Int
+  username: String
+  displayName: String
+  email: String
+  avatar: String
+  domain: String!
+  phone: String
+}
+
+type UserWord {
+  word: String!
+  translation: String
+  example: String
+  exp: Int!
+}
+
+input AddUserWordInput {
+  word: String!
+  translation: String
+  example: String
+}
+
+type AddUserWordPayload {
+  word: String!
+  translation: String
+  example: String
+}
+
+input UpdateUserWordInput {
+  id: Int!
+  word: String!
+  translation: String
+  example: String
+}
+
+type UpdateUserWordPayload {
+  success: Boolean!
+  message: String
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+}
+
+type UserWordsEdge {
+  cursor: String!
+  node: UserWord!
+}
+
+type UserWordsResultCursor {
+  edges: [UserWordsEdge]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type NewWOrdsResultCursor {
+  edges: [UserWordsEdge]!
+  pageInfo: PageInfo!
+  totalCount: Int!
 }
 
 type Query {
-    user: User
+  user: User
+  userWord(word: String!): UserWord
+  allUserWords(first: Int!, after: String): UserWordsResultCursor
+  allNewWords(first: Int!, after: String): NewWOrdsResultCursor
+}
+
+type Mutation {
+  addUserWord(input: AddUserWordInput!): AddUserWordPayload
+  updateUserWord(input: UpdateUserWordInput!): UpdateUserWordPayload
 }

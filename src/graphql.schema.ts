@@ -5,6 +5,25 @@
  */
 
 /* tslint:disable */
+export class AddUserWordInput {
+    word: string;
+    translation?: string;
+    example?: string;
+}
+
+export class UpdateUserWordInput {
+    id: number;
+    word: string;
+    translation?: string;
+    example?: string;
+}
+
+export class AddUserWordPayload {
+    word: string;
+    translation?: string;
+    example?: string;
+}
+
 export class Geolocation {
     id: number;
     latitude: number;
@@ -13,16 +32,23 @@ export class Geolocation {
     time: Date;
 }
 
-export class Murmur {
-    id: number;
-    text: string;
-    time: Date;
-}
-
 export abstract class IMutation {
     abstract createGeolocation(latitude: number, longitude: number, altitude: number, time: Date): Geolocation | Promise<Geolocation>;
 
-    abstract createMurmur(text: string): Murmur | Promise<Murmur>;
+    abstract addUserWord(input: AddUserWordInput): AddUserWordPayload | Promise<AddUserWordPayload>;
+
+    abstract updateUserWord(input: UpdateUserWordInput): UpdateUserWordPayload | Promise<UpdateUserWordPayload>;
+}
+
+export class NewWOrdsResultCursor {
+    edges: UserWordsEdge[];
+    pageInfo: PageInfo;
+    totalCount: number;
+}
+
+export class PageInfo {
+    endCursor?: string;
+    hasNextPage: boolean;
 }
 
 export abstract class IQuery {
@@ -31,10 +57,21 @@ export abstract class IQuery {
     abstract geolocation(): Geolocation | Promise<Geolocation>;
 
     abstract user(): User | Promise<User>;
+
+    abstract userWord(word: string): UserWord | Promise<UserWord>;
+
+    abstract allUserWords(first: number, after?: string): UserWordsResultCursor | Promise<UserWordsResultCursor>;
+
+    abstract allNewWords(first: number, after?: string): NewWOrdsResultCursor | Promise<NewWOrdsResultCursor>;
 }
 
 export abstract class ISubscription {
     abstract geolocationCreated(): Geolocation | Promise<Geolocation>;
+}
+
+export class UpdateUserWordPayload {
+    success: boolean;
+    message?: string;
 }
 
 export class User {
@@ -46,4 +83,22 @@ export class User {
     avatar?: string;
     domain: string;
     phone?: string;
+}
+
+export class UserWord {
+    word: string;
+    translation?: string;
+    example?: string;
+    exp: number;
+}
+
+export class UserWordsEdge {
+    cursor: string;
+    node: UserWord;
+}
+
+export class UserWordsResultCursor {
+    edges: UserWordsEdge[];
+    pageInfo: PageInfo;
+    totalCount: number;
 }

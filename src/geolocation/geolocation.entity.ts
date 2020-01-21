@@ -16,9 +16,12 @@ export class Geolocation {
   @Column({ type: 'double' })
   altitude: number;
 
-  @Column()
+  @Column({ type: 'timestamp' })
   time: Date;
 
-  @ManyToOne(type => User, user => user.geolocation)
+  @ManyToOne(
+    type => User,
+    user => user.geolocation,
+  )
   user: User;
 }
