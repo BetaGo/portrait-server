@@ -35,6 +35,9 @@ export class UserWord {
   @Column({ type: 'tinyint', comment: '忽略该单词', default: 0 })
   ignore: number;
 
+  @Column({ type: 'int', comment: '单词经验值', default: 0 })
+  exp: number;
+
   @CreateDateColumn()
   createdDate: Date;
 
@@ -46,11 +49,4 @@ export class UserWord {
     user => user.words,
   )
   user: User;
-
-  exp: number;
-
-  @AfterLoad()
-  getExp() {
-    this.exp = this.rememberTimes - this.rememberTimes;
-  }
 }

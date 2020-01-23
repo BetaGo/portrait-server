@@ -13,9 +13,11 @@ export class AddUserWordInput {
 
 export class UpdateUserWordInput {
     id: number;
-    word: string;
+    word?: string;
     translation?: string;
     example?: string;
+    forgottenTimes?: number;
+    rememberTimes?: number;
 }
 
 export class AddUserWordPayload {
@@ -40,7 +42,7 @@ export abstract class IMutation {
     abstract updateUserWord(input: UpdateUserWordInput): UpdateUserWordPayload | Promise<UpdateUserWordPayload>;
 }
 
-export class NewWOrdsResultCursor {
+export class NewWordsResultCursor {
     edges: UserWordsEdge[];
     pageInfo: PageInfo;
     totalCount: number;
@@ -62,7 +64,7 @@ export abstract class IQuery {
 
     abstract allUserWords(first: number, after?: string): UserWordsResultCursor | Promise<UserWordsResultCursor>;
 
-    abstract allNewWords(first: number, after?: string): NewWOrdsResultCursor | Promise<NewWOrdsResultCursor>;
+    abstract allNewWords(first: number, after?: string): NewWordsResultCursor | Promise<NewWordsResultCursor>;
 }
 
 export abstract class ISubscription {
@@ -86,10 +88,12 @@ export class User {
 }
 
 export class UserWord {
+    id: number;
     word: string;
     translation?: string;
     example?: string;
-    exp: number;
+    forgottenTimes: number;
+    rememberTimes: number;
 }
 
 export class UserWordsEdge {
