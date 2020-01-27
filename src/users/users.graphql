@@ -25,6 +25,7 @@ input AddUserWordInput {
 }
 
 type AddUserWordPayload {
+  id: Int!
   word: String!
   translation: String
   example: String

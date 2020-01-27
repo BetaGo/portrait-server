@@ -21,20 +21,21 @@ export class CursorPagination {
 
   public static async cursorList<T>(
     queryBuilder: SelectQueryBuilder<T>,
-    first: number,
+    first?: number,
     after?: string,
   ) {
-    if (first < 0) {
-      throw new Error('first must be positive');
+    let qb = queryBuilder;
+    if (first) {
+      if (first < 0) {
+        throw new Error('first must be positive');
+      }
+      qb.take(first);
     }
     const pagination = after
       ? CursorPagination.parseCursor(after)
       : { offset: -1 };
     const offset = pagination.offset + 1;
-    const [list, totalCount] = await queryBuilder
-      .skip(offset)
-      .take(first)
-      .getManyAndCount();
+    const [list, totalCount] = await qb.skip(offset).getManyAndCount();
     const hasNextPage = list.length < totalCount - offset ? true : false;
     let endCursor = '';
     const edges = list.map((userWord, index) => {

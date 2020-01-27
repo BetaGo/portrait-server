@@ -21,6 +21,7 @@ export class UpdateUserWordInput {
 }
 
 export class AddUserWordPayload {
+    id: number;
     word: string;
     translation?: string;
     example?: string;

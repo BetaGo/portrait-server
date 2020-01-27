@@ -68,7 +68,7 @@ export class UserWordsService {
     return CursorPagination.cursorList(queryBuilder, first, after);
   }
 
-  async newWordsCursorList(user: User, first: number, after?: string) {
+  async newWordsCursorList(user: User, first?: number, after?: string) {
     const queryBuilder = this.userWordsRepository
       .createQueryBuilder('a')
       .orderBy('exp', 'DESC')
