@@ -73,7 +73,10 @@ export class AuthController {
       throw new BadRequestException(error.message);
     }
     const redirectURI = request.session.redirect_uri;
-    let user = await this.usersService.findOne(profile.id, UserDomain.GITHUB);
+    let user = await this.usersService.findOneInThirdLogin(
+      profile.id,
+      UserDomain.GITHUB,
+    );
     if (!user) {
       user = await this.usersService.create({
         uid: profile.id,
@@ -84,7 +87,7 @@ export class AuthController {
         domain: UserDomain.GITHUB,
       });
     }
-    const token = await this.authService.login(user);
+    const token = await this.authService.sign(user);
     if (redirectURI) {
       const parsed = new Url(redirectURI);
       parsed.set('query', { token: token.access_token });

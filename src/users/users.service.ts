@@ -10,11 +10,32 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async findOne(uid: string, domain: UserDomain): Promise<User | undefined> {
+  /**
+   *  从第三方登陆的账号中查出一个
+   * @param uid 第三方登录提供的唯一 id
+   * @param domain
+   */
+  async findOneInThirdLogin(
+    uid: string,
+    domain: UserDomain,
+  ): Promise<User | undefined> {
     return this.userRepository.findOne({
       uid,
       domain,
     });
+  }
+
+  async update(id: number, data: Partial<User>) {
+    return this.userRepository.update(id, data);
+  }
+
+  async isExist(params: Partial<User>) {
+    let res = await this.userRepository.findOne(params);
+    return !!res;
+  }
+
+  async findOne(params: Partial<User>) {
+    return this.userRepository.findOne(params);
   }
 
   async findOneById(id: number): Promise<User | undefined> {
