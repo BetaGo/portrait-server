@@ -20,6 +20,19 @@ export class UpdateUserWordInput {
     rememberTimes?: number;
 }
 
+export class AddUserInput {
+    username: string;
+    displayName: string;
+    email?: string;
+    avatar?: string;
+    phone?: string;
+}
+
+export class AddUserPayload {
+    id: number;
+    accessToken: string;
+}
+
 export class AddUserWordPayload {
     id: number;
     word: string;
@@ -38,9 +51,13 @@ export class Geolocation {
 export abstract class IMutation {
     abstract createGeolocation(latitude: number, longitude: number, altitude: number, time: Date): Geolocation | Promise<Geolocation>;
 
+    abstract addUser(input?: AddUserInput): AddUserPayload | Promise<AddUserPayload>;
+
+    abstract updateUser(input?: UpdateUserInput): UpdateResult | Promise<UpdateResult>;
+
     abstract addUserWord(input: AddUserWordInput): AddUserWordPayload | Promise<AddUserWordPayload>;
 
-    abstract updateUserWord(input: UpdateUserWordInput): UpdateUserWordPayload | Promise<UpdateUserWordPayload>;
+    abstract updateUserWord(input: UpdateUserWordInput): UpdateResult | Promise<UpdateResult>;
 }
 
 export class NewWordsResultCursor {
@@ -61,6 +78,8 @@ export abstract class IQuery {
 
     abstract user(): User | Promise<User>;
 
+    abstract userLogin(input?: UserLoginInput): UserLoginPayload | Promise<UserLoginPayload>;
+
     abstract userWord(word: string): UserWord | Promise<UserWord>;
 
     abstract allUserWords(first: number, after?: string): UserWordsResultCursor | Promise<UserWordsResultCursor>;
@@ -72,20 +91,37 @@ export abstract class ISubscription {
     abstract geolocationCreated(): Geolocation | Promise<Geolocation>;
 }
 
-export class UpdateUserWordPayload {
+export class UpdateResult {
     success: boolean;
     message?: string;
+}
+
+export class UpdateUserInput {
+    id: number;
+    displayName?: string;
+    email?: string;
+    avatar?: string;
+    phone?: string;
 }
 
 export class User {
     id: number;
     uid?: number;
     username?: string;
-    displayName?: string;
+    displayName: string;
     email?: string;
     avatar?: string;
     domain: string;
     phone?: string;
+}
+
+export class UserLoginInput {
+    account: string;
+    password: string;
+}
+
+export class UserLoginPayload {
+    accessToken: string;
 }
 
 export class UserWord {

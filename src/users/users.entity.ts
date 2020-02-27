@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  Unique,
 } from 'typeorm';
 
 import { Geolocation } from '../geolocation/geolocation.entity';
@@ -18,6 +19,7 @@ export enum UserDomain {
 }
 
 @Entity()
+@Unique(['email', 'username'])
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -25,11 +27,14 @@ export class User {
   @Column({ comment: '第三方登录提供的id' })
   uid: string;
 
-  @Column({ length: 500 })
+  @Column({ length: 32, comment: '用户账号' })
   username: string;
 
-  @Column({ length: 500 })
+  @Column({ length: 32, comment: '用户昵称' })
   displayName: string;
+
+  @Column()
+  password: string;
 
   @Column({
     default: '',
