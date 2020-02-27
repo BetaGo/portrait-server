@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-github';
 import { ConfigService } from '../config/config.service';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 export interface GithubProfile {
   id: string;

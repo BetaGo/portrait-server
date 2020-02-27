@@ -1,6 +1,6 @@
 type User {
   id: Int!
-  uid: Int
+  uid: String
   username: String
   displayName: String!
   email: String
@@ -9,9 +9,10 @@ type User {
   phone: String
 }
 
-type AddUserInput {
+input AddUserInput {
   username: String!
   displayName: String!
+  password: String!
   email: String
   avatar: String
   phone: String
@@ -22,7 +23,7 @@ type AddUserPayload {
   accessToken: String!
 }
 
-type UserLoginInput {
+input UserLoginInput {
   account: String!
   password: String!
 }
@@ -31,8 +32,7 @@ type UserLoginPayload {
   accessToken: String!
 }
 
-type UpdateUserInput {
-  id: Int!
+input UpdateUserInput {
   displayName: String
   email: String
   avatar: String

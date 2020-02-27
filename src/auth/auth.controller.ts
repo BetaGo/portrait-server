@@ -1,4 +1,4 @@
-import * as Joi from '@hapi/joi';
+import Joi from '@hapi/joi';
 import {
   BadRequestException,
   Controller,
@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
-import * as _ from 'lodash';
-import * as Url from 'url-parse';
+import _ from 'lodash';
+import Url from 'url-parse';
 
 import { User as CurrentUser } from '../users/users.decorator';
 import { UserDomain } from '../users/users.entity';
@@ -48,7 +48,7 @@ export class AuthController {
   @Redirect('/auth')
   githubAuthPost(
     @Param('type') authType: string,
-    @Query('redirect_uri') redirectURI: string = '',
+    @Query('redirect_uri') redirectURI = '',
     @Req() request: Request & { session: any },
   ) {
     request.session.redirect_uri = redirectURI;

@@ -1,6 +1,6 @@
-import * as dotenv from 'dotenv';
-import * as Joi from '@hapi/joi';
-import * as fs from 'fs';
+import dotenv from 'dotenv';
+import Joi from '@hapi/joi';
+import fs from 'fs';
 
 import { dotenvFiles } from './config.env';
 

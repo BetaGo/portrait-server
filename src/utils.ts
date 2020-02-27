@@ -1,5 +1,5 @@
-import * as typeorm from 'typeorm';
-import * as _ from 'lodash';
+import typeorm from 'typeorm';
+import _ from 'lodash';
 import { UpdateResult } from './graphql.schema';
 
 export function generateUpdateResult(

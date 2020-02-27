@@ -1,8 +1,8 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { UseGuards, UnauthorizedException } from '@nestjs/common';
-import * as _ from 'lodash';
-import * as bcrypt from 'bcrypt';
+import _ from 'lodash';
+import bcrypt from 'bcrypt';
 import { ApolloError } from 'apollo-server-express';
 import { GQLAuthGuard } from '../auth/graphql-auth.guard';
 import { UserGQL } from './users.decorator';
@@ -49,10 +49,10 @@ export class UsersResolver {
 
   @Mutation('addUser')
   async addUser(@Args('input') input: AddUserInput): Promise<AddUserPayload> {
-    let userData: DeepPartial<User> = { ...input };
+    const userData = input;
     await this.checkUserInfo(userData);
 
-    let password = await bcrypt.hash(userData.password, 10);
+    const password = await bcrypt.hash(userData.password, 10);
     userData.password = password;
 
     const user = await this.usersService.create(userData);
@@ -63,13 +63,13 @@ export class UsersResolver {
     };
   }
 
+  @UseGuards(GQLAuthGuard)
   @Mutation('updateUser')
   async updateUser(
     @Args('input') input: UpdateUserInput,
+    @UserGQL() user: User,
   ): Promise<UpdateResult> {
-    const { id, ...data } = input;
-    await this.checkUserInfo(input);
-    const result = await this.usersService.update(id, data);
+    const result = await this.usersService.update(user.id, input);
     return generateUpdateResult(result);
   }
 

@@ -19,12 +19,12 @@ export enum UserDomain {
 }
 
 @Entity()
-@Unique(['email', 'username'])
+@Unique(['username'])
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ comment: '第三方登录提供的id' })
+  @Column({ default: '', comment: '第三方登录提供的id' })
   uid: string;
 
   @Column({ length: 32, comment: '用户账号' })

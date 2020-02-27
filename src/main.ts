@@ -2,12 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-import * as dotenv from 'dotenv';
-import * as session from 'express-session';
-import * as dotenvExpand from 'dotenv-expand';
+import dotenv from 'dotenv';
+import session from 'express-session';
+import dotenvExpand from 'dotenv-expand';
 
 import { dotenvFiles } from './config/config.env';
-import * as fs from 'fs';
+import fs from 'fs';
 
 dotenvFiles.forEach(dotenvFile => {
   if (fs.existsSync(dotenvFile as string)) {

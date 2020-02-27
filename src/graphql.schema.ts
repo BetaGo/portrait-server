@@ -5,10 +5,27 @@
  */
 
 /* tslint:disable */
+/* eslint-disable */
+export class AddUserInput {
+    username: string;
+    displayName: string;
+    password: string;
+    email?: string;
+    avatar?: string;
+    phone?: string;
+}
+
 export class AddUserWordInput {
     word: string;
     translation?: string;
     example?: string;
+}
+
+export class UpdateUserInput {
+    displayName?: string;
+    email?: string;
+    avatar?: string;
+    phone?: string;
 }
 
 export class UpdateUserWordInput {
@@ -20,12 +37,9 @@ export class UpdateUserWordInput {
     rememberTimes?: number;
 }
 
-export class AddUserInput {
-    username: string;
-    displayName: string;
-    email?: string;
-    avatar?: string;
-    phone?: string;
+export class UserLoginInput {
+    account: string;
+    password: string;
 }
 
 export class AddUserPayload {
@@ -96,28 +110,15 @@ export class UpdateResult {
     message?: string;
 }
 
-export class UpdateUserInput {
-    id: number;
-    displayName?: string;
-    email?: string;
-    avatar?: string;
-    phone?: string;
-}
-
 export class User {
     id: number;
-    uid?: number;
+    uid?: string;
     username?: string;
     displayName: string;
     email?: string;
     avatar?: string;
     domain: string;
     phone?: string;
-}
-
-export class UserLoginInput {
-    account: string;
-    password: string;
 }
 
 export class UserLoginPayload {
