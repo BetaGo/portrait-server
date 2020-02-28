@@ -8,6 +8,8 @@ import {
   Redirect,
   Req,
   UseGuards,
+  Post,
+  Body,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
@@ -19,6 +21,8 @@ import { UserDomain } from '../users/users.entity';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { GithubProfile } from './github.strategy';
+import { ThirdLoginDto } from './auth-dto';
+import { ConfigService } from '../config/config.service';
 
 const sessionSchema = Joi.object()
   .keys({
@@ -37,11 +41,35 @@ export class AuthController {
   constructor(
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
+    private readonly configService: ConfigService
   ) {}
 
   @Get('callback')
   callback(@Req() req: Request) {
     return req.header('Host');
+  }
+
+  @Post('/')
+  @Redirect('/')
+  thirdLogin(
+    @Body() body: ThirdLoginDto
+  ) {
+    const {
+      type,
+      redirectUrl,
+    } = body;
+
+    const state = Buffer.from(redirectUrl).toString('base64');
+    switch (type) {
+      case 'github':
+        return {
+          url: `https://github.com/login/oauth/authorize?state=${state}&client_id=${this.configService.get('GITHUB_CLIENT_ID')}&scope=user:email`,
+        }
+        break;
+    
+      default:
+        break;
+    }
   }
 
   @Get(':type')
@@ -90,7 +118,7 @@ export class AuthController {
     const token = await this.authService.sign(user);
     if (redirectURI) {
       const parsed = new Url(redirectURI);
-      parsed.set('query', { token: token.access_token });
+      parsed.set('query', { token: token.accessToken });
       return {
         url: parsed.toString(),
       };
@@ -99,7 +127,7 @@ export class AuthController {
         'Host',
       )}/auth/callback`;
       const parsed = new Url(baseUrl);
-      parsed.set('query', { token: token.access_token });
+      parsed.set('query', { token: token.accessToken });
       return {
         url: parsed.toString(),
       };

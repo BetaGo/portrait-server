@@ -59,7 +59,7 @@ export class UsersResolver {
     const authToken = await this.authService.sign(user);
     return {
       id: user.id,
-      accessToken: authToken.access_token,
+      accessToken: authToken.accessToken,
     };
   }
 
@@ -97,7 +97,7 @@ export class UsersResolver {
     }
     const token = await this.authService.sign(user);
     return {
-      accessToken: token.access_token,
+      accessToken: token.accessToken,
     };
   }
 

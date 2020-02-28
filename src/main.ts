@@ -8,6 +8,7 @@ import dotenvExpand from 'dotenv-expand';
 
 import { dotenvFiles } from './config/config.env';
 import fs from 'fs';
+import { ValidationPipe } from '@nestjs/common';
 
 dotenvFiles.forEach(dotenvFile => {
   if (fs.existsSync(dotenvFile as string)) {
@@ -23,6 +24,7 @@ dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
   app.use(
     session({
       secret: 'just use to store auth redirect path',
