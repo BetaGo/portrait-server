@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Repository, DeepPartial } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, UserDomain } from './users.entity';
+import { User, ThirdLoginType } from './users.entity';
 
 @Injectable()
 export class UsersService {
@@ -12,16 +12,16 @@ export class UsersService {
 
   /**
    *  从第三方登陆的账号中查出一个
-   * @param uid 第三方登录提供的唯一 id
-   * @param domain
+   * @param thirdLoginId 第三方登录提供的唯一 id
+   * @param ThirdLoginType
    */
   async findOneInThirdLogin(
-    uid: string,
-    domain: UserDomain,
+    thirdLoginId: string,
+    thirdLoginType: ThirdLoginType,
   ): Promise<User | undefined> {
     return this.userRepository.findOne({
-      uid,
-      domain,
+      thirdLoginId,
+      thirdLoginType,
     });
   }
 

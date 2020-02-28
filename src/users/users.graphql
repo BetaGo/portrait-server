@@ -1,11 +1,11 @@
 type User {
   id: Int!
-  uid: String
+  thirdLoginId: String
   username: String
   displayName: String!
   email: String
   avatar: String
-  domain: String!
+  ThirdLoginType: String
   phone: String
 }
 

@@ -112,12 +112,12 @@ export class UpdateResult {
 
 export class User {
     id: number;
-    uid?: string;
+    thirdLoginId?: string;
     username?: string;
     displayName: string;
     email?: string;
     avatar?: string;
-    domain: string;
+    ThirdLoginType?: string;
     phone?: string;
 }
 
