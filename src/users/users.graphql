@@ -21,6 +21,7 @@ input AddUserInput {
 type AddUserPayload {
   id: Int!
   accessToken: String!
+  refreshToken: String!
 }
 
 input UserLoginInput {

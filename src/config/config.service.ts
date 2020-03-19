@@ -5,7 +5,24 @@ import fs from 'fs';
 import { dotenvFiles } from './config.env';
 
 export interface EnvConfig {
-  [key: string]: string;
+  NODE_ENV: string;
+  PORT: number,
+
+  DATABASE_USER: string,
+  DATABASE_PASSWORD: string,
+  DATABASE_NAME: string,
+  DATABASE_HOST: string,
+  DATABASE_PORT: number,
+
+  SECRET: string,
+
+  JWT_EXPIRES_IN: number,
+  REFRESH_TOKEN_EXPIRES_IN: number,
+
+  GITHUB_CLIENT_ID: string,
+  GITHUB_CLIENT_SECRET: string,
+  GITHUB_CALLBACK_URL: string,
+  [key: string]: string | number | undefined,
 }
 
 export class ConfigService {
@@ -22,7 +39,7 @@ export class ConfigService {
     this.envConfig = this.validateInput(config);
   }
 
-  get(key: string): string {
+  get<K extends keyof EnvConfig>(key: K): EnvConfig[K] {
     return this.envConfig[key];
   }
 
@@ -30,7 +47,7 @@ export class ConfigService {
    * Ensures all needed variables are set, and returns the validated JavaScript object
    * including the applied default values.
    */
-  private validateInput(envConfig: EnvConfig): EnvConfig {
+  private validateInput(envConfig: {}): EnvConfig {
     const envVarsSchema: Joi.ObjectSchema = Joi.object({
       NODE_ENV: Joi.string()
         .valid('development', 'production', 'test', 'provision')
@@ -44,6 +61,10 @@ export class ConfigService {
       DATABASE_PORT: Joi.number().default(3306),
 
       SECRET: Joi.string().required(),
+
+      // 鉴权过期时间配置, 单位毫秒(ms)
+      JWT_EXPIRES_IN: Joi.number().integer().default(30 * 60 * 1000),
+      REFRESH_TOKEN_EXPIRES_IN: Joi.number().integer().default(7 * 24 * 60 * 60 * 1000),
 
       GITHUB_CLIENT_ID: Joi.string().required(),
       GITHUB_CLIENT_SECRET: Joi.string().required(),

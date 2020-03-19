@@ -74,7 +74,7 @@ export class AuthController {
     const url = new Url(s);
     url.set('query', {
       ...url.query,
-      accessToken: token.accessToken,
+      ...token,
     });
     return {
       url: url.toString(),

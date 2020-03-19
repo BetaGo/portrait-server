@@ -96,9 +96,7 @@ export class UsersResolver {
       throw new UnauthorizedException();
     }
     const token = await this.authService.sign(user);
-    return {
-      accessToken: token.accessToken,
-    };
+    return token;
   }
 
   @UseGuards(GQLAuthGuard)
