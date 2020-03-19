@@ -17,6 +17,8 @@ import {
   UserLoginPayload,
   UpdateUserInput,
   UpdateResult,
+  RefreshTokenInput,
+  RefreshTokenPayload,
 } from '../graphql.schema';
 import { AuthService } from '../auth/auth.service';
 import { DeepPartial } from 'typeorm';
@@ -59,7 +61,7 @@ export class UsersResolver {
     const authToken = await this.authService.sign(user);
     return {
       id: user.id,
-      accessToken: authToken.accessToken,
+      ...authToken,
     };
   }
 
@@ -97,6 +99,21 @@ export class UsersResolver {
     }
     const token = await this.authService.sign(user);
     return token;
+  }
+
+  @Query('refreshToken')
+  async refreshToken(
+    @Args('input') input: RefreshTokenInput,
+  ): Promise<RefreshTokenPayload> {
+    const accessTokenPayload = this.authService.parseAccessToken(
+      input.accessToken,
+    );
+    const user = await this.usersService.findOneById(accessTokenPayload.sub);
+    return this.authService.refreshToken(
+      input.accessToken,
+      input.refreshToken,
+      user,
+    );
   }
 
   @UseGuards(GQLAuthGuard)

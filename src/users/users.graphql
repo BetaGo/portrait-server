@@ -93,12 +93,23 @@ type NewWordsResultCursor {
   totalCount: Int!
 }
 
+input RefreshTokenInput {
+  refreshToken: String!
+  accessToken: String!
+}
+
+type RefreshTokenPayload {
+  refreshToken: String!
+  accessToken: String!
+}
+
 type Query {
   user: User
   userLogin(input: UserLoginInput): UserLoginPayload
   userWord(word: String!): UserWord
   allUserWords(first: Int!, after: String): UserWordsResultCursor
   allNewWords(first: Int!, after: String): NewWordsResultCursor
+  refreshToken(input: RefreshTokenInput): RefreshTokenPayload
 }
 
 type Mutation {

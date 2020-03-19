@@ -5,7 +5,6 @@
  */
 
 /* tslint:disable */
-/* eslint-disable */
 export class AddUserInput {
     username: string;
     displayName: string;
@@ -19,6 +18,11 @@ export class AddUserWordInput {
     word: string;
     translation?: string;
     example?: string;
+}
+
+export class RefreshTokenInput {
+    refreshToken: string;
+    accessToken: string;
 }
 
 export class UpdateUserInput {
@@ -45,6 +49,7 @@ export class UserLoginInput {
 export class AddUserPayload {
     id: number;
     accessToken: string;
+    refreshToken: string;
 }
 
 export class AddUserWordPayload {
@@ -99,6 +104,13 @@ export abstract class IQuery {
     abstract allUserWords(first: number, after?: string): UserWordsResultCursor | Promise<UserWordsResultCursor>;
 
     abstract allNewWords(first: number, after?: string): NewWordsResultCursor | Promise<NewWordsResultCursor>;
+
+    abstract refreshToken(input?: RefreshTokenInput): RefreshTokenPayload | Promise<RefreshTokenPayload>;
+}
+
+export class RefreshTokenPayload {
+    refreshToken: string;
+    accessToken: string;
 }
 
 export abstract class ISubscription {

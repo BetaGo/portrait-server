@@ -5,7 +5,7 @@ import * as redis from 'redis';
 
 import { ConfigService } from '../config/config.service';
 import { User } from '../users/users.entity';
-import { IGithubUser } from './auth.interface';
+import { IGithubUser, IAccessTokenPayload } from './auth.interface';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +15,24 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {
     this.redis = redis.createClient();
+  }
+
+  parseAccessToken(accessToken: string): IAccessTokenPayload {
+    return this.jwtService.decode(accessToken) as IAccessTokenPayload;
+  }
+
+  async refreshToken(accessToken: string, refreshToken: string, user: User) {
+    const t = await new Promise<string>((resolve, reject) => {
+      this.redis.get(accessToken, (err, reply) => {
+        if (err) reject(err);
+        resolve(reply)
+      });
+    } )
+    if (t && t === refreshToken) {
+      return this.sign(user);
+    } else {
+      throw new Error('token 无效');
+    }
   }
 
   createRefreshToken(accessToken: string) {
@@ -27,7 +45,7 @@ export class AuthService {
   }
 
   async sign(user: User) {
-    const payload = { username: user.username, sub: user.id };
+    const payload: IAccessTokenPayload = { username: user.username, sub: user.id };
     const accessToken = this.jwtService.sign(payload);
     const refreshToken = this.createRefreshToken(accessToken);
     return {
