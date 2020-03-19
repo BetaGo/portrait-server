@@ -52,6 +52,10 @@ export class UsersResolver {
   @Mutation('addUser')
   async addUser(@Args('input') input: AddUserInput): Promise<AddUserPayload> {
     const userData = input;
+    const isTokenRight = await this.authService.consumeLoginToken(input.token);
+    if (!isTokenRight) {
+      throw new UnauthorizedException();
+    }
     await this.checkUserInfo(userData);
 
     const password = await bcrypt.hash(userData.password, 10);
@@ -79,7 +83,11 @@ export class UsersResolver {
   async userLogin(
     @Args('input') input: UserLoginInput,
   ): Promise<UserLoginPayload> {
-    const { account, password } = input;
+    const { account, password, token } = input;
+    const isTokenRight = await this.authService.consumeLoginToken(token);
+    if (!isTokenRight) {
+      throw new UnauthorizedException();
+    }
     let user: User | undefined;
     if (account.includes('@')) {
       user = await this.usersService.findOne({
@@ -97,8 +105,16 @@ export class UsersResolver {
     if (!isMatch) {
       throw new UnauthorizedException();
     }
-    const token = await this.authService.sign(user);
-    return token;
+    const tokens = await this.authService.sign(user);
+    return tokens;
+  }
+
+  @Query('loginToken')
+  async loginToken() {
+    const token = await this.authService.createLoginToken();
+    return {
+      token,
+    };
   }
 
   @Query('refreshToken')
@@ -109,7 +125,7 @@ export class UsersResolver {
       input.accessToken,
     );
     const user = await this.usersService.findOneById(accessTokenPayload.sub);
-    return this.authService.refreshToken(
+    return this.authService.consumeRefreshToken(
       input.accessToken,
       input.refreshToken,
       user,

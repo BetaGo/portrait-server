@@ -5,6 +5,7 @@
  */
 
 /* tslint:disable */
+/* eslint-disable */
 export class AddUserInput {
     username: string;
     displayName: string;
@@ -12,6 +13,7 @@ export class AddUserInput {
     email?: string;
     avatar?: string;
     phone?: string;
+    token: string;
 }
 
 export class AddUserWordInput {
@@ -44,6 +46,7 @@ export class UpdateUserWordInput {
 export class UserLoginInput {
     account: string;
     password: string;
+    token: string;
 }
 
 export class AddUserPayload {
@@ -65,6 +68,10 @@ export class Geolocation {
     longitude: number;
     altitude: number;
     time: Date;
+}
+
+export class LoginTokenPayload {
+    token: string;
 }
 
 export abstract class IMutation {
@@ -106,6 +113,8 @@ export abstract class IQuery {
     abstract allNewWords(first: number, after?: string): NewWordsResultCursor | Promise<NewWordsResultCursor>;
 
     abstract refreshToken(input?: RefreshTokenInput): RefreshTokenPayload | Promise<RefreshTokenPayload>;
+
+    abstract loginToken(): LoginTokenPayload | Promise<LoginTokenPayload>;
 }
 
 export class RefreshTokenPayload {

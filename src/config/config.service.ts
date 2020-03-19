@@ -6,23 +6,24 @@ import { dotenvFiles } from './config.env';
 
 export interface EnvConfig {
   NODE_ENV: string;
-  PORT: number,
+  PORT: number;
 
-  DATABASE_USER: string,
-  DATABASE_PASSWORD: string,
-  DATABASE_NAME: string,
-  DATABASE_HOST: string,
-  DATABASE_PORT: number,
+  DATABASE_USER: string;
+  DATABASE_PASSWORD: string;
+  DATABASE_NAME: string;
+  DATABASE_HOST: string;
+  DATABASE_PORT: number;
 
-  SECRET: string,
+  SECRET: string;
 
-  JWT_EXPIRES_IN: number,
-  REFRESH_TOKEN_EXPIRES_IN: number,
+  JWT_EXPIRES_IN: number;
+  REFRESH_TOKEN_EXPIRES_IN: number;
+  LOGIN_TOKEN_EXPIRES_IN: number;
 
-  GITHUB_CLIENT_ID: string,
-  GITHUB_CLIENT_SECRET: string,
-  GITHUB_CALLBACK_URL: string,
-  [key: string]: string | number | undefined,
+  GITHUB_CLIENT_ID: string;
+  GITHUB_CLIENT_SECRET: string;
+  GITHUB_CALLBACK_URL: string;
+  [key: string]: string | number | undefined;
 }
 
 export class ConfigService {
@@ -63,8 +64,15 @@ export class ConfigService {
       SECRET: Joi.string().required(),
 
       // 鉴权过期时间配置, 单位毫秒(ms)
-      JWT_EXPIRES_IN: Joi.number().integer().default(30 * 60 * 1000),
-      REFRESH_TOKEN_EXPIRES_IN: Joi.number().integer().default(7 * 24 * 60 * 60 * 1000),
+      JWT_EXPIRES_IN: Joi.number()
+        .integer()
+        .default(30 * 60 * 1000),
+      REFRESH_TOKEN_EXPIRES_IN: Joi.number()
+        .integer()
+        .default(7 * 24 * 60 * 60 * 1000),
+      LOGIN_TOKEN_EXPIRES_IN: Joi.number()
+        .integer()
+        .default(5 * 60 * 1000),
 
       GITHUB_CLIENT_ID: Joi.string().required(),
       GITHUB_CLIENT_SECRET: Joi.string().required(),

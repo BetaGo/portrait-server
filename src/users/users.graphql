@@ -16,6 +16,7 @@ input AddUserInput {
   email: String
   avatar: String
   phone: String
+  token: String!
 }
 
 type AddUserPayload {
@@ -27,6 +28,7 @@ type AddUserPayload {
 input UserLoginInput {
   account: String!
   password: String!
+  token: String!
 }
 
 type UserLoginPayload {
@@ -103,6 +105,10 @@ type RefreshTokenPayload {
   accessToken: String!
 }
 
+type LoginTokenPayload {
+  token: String!
+}
+
 type Query {
   user: User
   userLogin(input: UserLoginInput): UserLoginPayload
@@ -110,6 +116,7 @@ type Query {
   allUserWords(first: Int!, after: String): UserWordsResultCursor
   allNewWords(first: Int!, after: String): NewWordsResultCursor
   refreshToken(input: RefreshTokenInput): RefreshTokenPayload
+  loginToken: LoginTokenPayload
 }
 
 type Mutation {
