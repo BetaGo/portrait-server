@@ -24,7 +24,7 @@ export class CursorPagination {
     first?: number,
     after?: string,
   ) {
-    let qb = queryBuilder;
+    const qb = queryBuilder;
     if (first) {
       if (first < 0) {
         throw new Error('first must be positive');
