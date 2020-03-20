@@ -4,10 +4,11 @@ import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
 import * as redis from 'redis';
 import { v4 as uuidV4 } from 'uuid';
+import crypto from 'crypto';
 
 import { ConfigService } from '../config/config.service';
 import { User } from '../users/users.entity';
-import { IGithubUser, IAccessTokenPayload } from './auth.interface';
+import { IGithubUser, IAccessTokenPayload, IPassword } from './auth.interface';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +18,13 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {
     this.redis = redis.createClient();
+  }
+
+  parsePassword(encryptedPassword: string): IPassword {
+    const privateKey = this.configService.get('LOGIN_PRIVATE_RSA_KEY');
+    const parsedString = crypto.privateDecrypt(privateKey, Buffer.from(encryptedPassword, 'base64'));
+    const password = JSON.parse(parsedString.toString());
+    return password;
   }
 
   parseAccessToken(accessToken: string): IAccessTokenPayload {

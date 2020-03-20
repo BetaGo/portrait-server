@@ -13,7 +13,6 @@ export class AddUserInput {
     email?: string;
     avatar?: string;
     phone?: string;
-    token: string;
 }
 
 export class AddUserWordInput {
@@ -32,6 +31,7 @@ export class UpdateUserInput {
     email?: string;
     avatar?: string;
     phone?: string;
+    password?: string;
 }
 
 export class UpdateUserWordInput {
@@ -46,7 +46,6 @@ export class UpdateUserWordInput {
 export class UserLoginInput {
     account: string;
     password: string;
-    token: string;
 }
 
 export class AddUserPayload {
@@ -72,6 +71,7 @@ export class Geolocation {
 
 export class LoginTokenPayload {
     token: string;
+    publicKey: string;
 }
 
 export abstract class IMutation {

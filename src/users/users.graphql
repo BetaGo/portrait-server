@@ -16,7 +16,6 @@ input AddUserInput {
   email: String
   avatar: String
   phone: String
-  token: String!
 }
 
 type AddUserPayload {
@@ -28,7 +27,6 @@ type AddUserPayload {
 input UserLoginInput {
   account: String!
   password: String!
-  token: String!
 }
 
 type UserLoginPayload {
@@ -40,6 +38,7 @@ input UpdateUserInput {
   email: String
   avatar: String
   phone: String
+  password: String
 }
 
 type UserWord {
@@ -107,6 +106,7 @@ type RefreshTokenPayload {
 
 type LoginTokenPayload {
   token: String!
+  publicKey: String!
 }
 
 type Query {

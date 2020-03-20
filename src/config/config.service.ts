@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import Joi from '@hapi/joi';
 import fs from 'fs';
+import crypto, { KeyObject } from 'crypto';
 
 import { dotenvFiles } from './config.env';
 
@@ -15,15 +16,19 @@ export interface EnvConfig {
   DATABASE_PORT: number;
 
   SECRET: string;
+  LOGIN_RSA_PASSPHRASE: string;
 
   JWT_EXPIRES_IN: number;
   REFRESH_TOKEN_EXPIRES_IN: number;
   LOGIN_TOKEN_EXPIRES_IN: number;
 
+  LOGIN_PUBLIC_RSA_KEY: KeyObject;
+  LOGIN_PRIVATE_RSA_KEY: KeyObject;
+
   GITHUB_CLIENT_ID: string;
   GITHUB_CLIENT_SECRET: string;
   GITHUB_CALLBACK_URL: string;
-  [key: string]: string | number | undefined;
+  [key: string]: any;
 }
 
 export class ConfigService {
@@ -62,6 +67,7 @@ export class ConfigService {
       DATABASE_PORT: Joi.number().default(3306),
 
       SECRET: Joi.string().required(),
+      LOGIN_RSA_PASSPHRASE: Joi.string().required(),
 
       // 鉴权过期时间配置, 单位毫秒(ms)
       JWT_EXPIRES_IN: Joi.number()
@@ -86,6 +92,33 @@ export class ConfigService {
     );
     if (error) {
       throw new Error(`Config validation error: ${error.message}`);
+    }
+    if (!fs.existsSync('keys/login-public.pem') || !fs.existsSync('keys/login-private.pem')) {
+      const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 4096,
+        publicKeyEncoding: {
+          type: 'spki',
+          format: 'pem'
+        },
+        privateKeyEncoding: {
+          type: 'pkcs8',
+          format: 'pem',
+          cipher: 'aes-256-cbc',
+          passphrase: validatedEnvConfig.LOGIN_RSA_PASSPHRASE
+        }
+      });
+      fs.writeFileSync('keys/login-public.pem', publicKey);
+      fs.writeFileSync('keys/login-private.pem', privateKey);
+      validatedEnvConfig.LOGIN_PUBLIC_RSA_KEY = crypto.createPublicKey(publicKey);
+      validatedEnvConfig.LOGIN_PRIVATE_RSA_KEY = crypto.createPrivateKey({
+        key: privateKey,
+        passphrase: validatedEnvConfig.LOGIN_RSA_PASSPHRASE
+      });
+    } else {
+      const publicKey = fs.readFileSync('keys/login-public.pem').toString();
+      const privateKey = fs.readFileSync('keys/login-private.pem').toString();
+      validatedEnvConfig.LOGIN_PUBLIC_RSA_KEY = publicKey;
+      validatedEnvConfig.LOGIN_PRIVATE_RSA_KEY = privateKey;
     }
     return validatedEnvConfig;
   }

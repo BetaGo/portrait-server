@@ -5,6 +5,11 @@ export interface IGithubPlan {
   collaborators: number;
 }
 
+export interface IPassword {
+  token: string;
+  text: string;
+}
+
 export interface IAccessTokenPayload {
   username: string;
   sub: number;
