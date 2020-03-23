@@ -1,11 +1,34 @@
-import * as dotenv from 'dotenv';
-import * as Joi from '@hapi/joi';
-import * as fs from 'fs';
+import dotenv from 'dotenv';
+import Joi from '@hapi/joi';
+import fs from 'fs';
+import crypto, { KeyObject } from 'crypto';
 
 import { dotenvFiles } from './config.env';
 
 export interface EnvConfig {
-  [key: string]: string;
+  NODE_ENV: string;
+  PORT: number;
+
+  DATABASE_USER: string;
+  DATABASE_PASSWORD: string;
+  DATABASE_NAME: string;
+  DATABASE_HOST: string;
+  DATABASE_PORT: number;
+
+  SECRET: string;
+  LOGIN_RSA_PASSPHRASE: string;
+
+  JWT_EXPIRES_IN: number;
+  REFRESH_TOKEN_EXPIRES_IN: number;
+  LOGIN_TOKEN_EXPIRES_IN: number;
+
+  LOGIN_PUBLIC_RSA_KEY: KeyObject;
+  LOGIN_PRIVATE_RSA_KEY: KeyObject;
+
+  GITHUB_CLIENT_ID: string;
+  GITHUB_CLIENT_SECRET: string;
+  GITHUB_CALLBACK_URL: string;
+  [key: string]: any;
 }
 
 export class ConfigService {
@@ -22,7 +45,7 @@ export class ConfigService {
     this.envConfig = this.validateInput(config);
   }
 
-  get(key: string): string {
+  get<K extends keyof EnvConfig>(key: K): EnvConfig[K] {
     return this.envConfig[key];
   }
 
@@ -30,7 +53,7 @@ export class ConfigService {
    * Ensures all needed variables are set, and returns the validated JavaScript object
    * including the applied default values.
    */
-  private validateInput(envConfig: EnvConfig): EnvConfig {
+  private validateInput(envConfig: {}): EnvConfig {
     const envVarsSchema: Joi.ObjectSchema = Joi.object({
       NODE_ENV: Joi.string()
         .valid('development', 'production', 'test', 'provision')
@@ -44,6 +67,18 @@ export class ConfigService {
       DATABASE_PORT: Joi.number().default(3306),
 
       SECRET: Joi.string().required(),
+      LOGIN_RSA_PASSPHRASE: Joi.string().required(),
+
+      // 鉴权过期时间配置, 单位毫秒(ms)
+      JWT_EXPIRES_IN: Joi.number()
+        .integer()
+        .default(30 * 60 * 1000),
+      REFRESH_TOKEN_EXPIRES_IN: Joi.number()
+        .integer()
+        .default(7 * 24 * 60 * 60 * 1000),
+      LOGIN_TOKEN_EXPIRES_IN: Joi.number()
+        .integer()
+        .default(5 * 60 * 1000),
 
       GITHUB_CLIENT_ID: Joi.string().required(),
       GITHUB_CLIENT_SECRET: Joi.string().required(),
@@ -57,6 +92,46 @@ export class ConfigService {
     );
     if (error) {
       throw new Error(`Config validation error: ${error.message}`);
+    }
+    if (!fs.existsSync('keys')) {
+      fs.mkdirSync('keys');
+    }
+    if (
+      !fs.existsSync('keys/login-public.pem') ||
+      !fs.existsSync('keys/login-private.pem')
+    ) {
+      const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 4096,
+        publicKeyEncoding: {
+          type: 'spki',
+          format: 'pem',
+        },
+        privateKeyEncoding: {
+          type: 'pkcs8',
+          format: 'pem',
+          cipher: 'aes-256-cbc',
+          passphrase: validatedEnvConfig.LOGIN_RSA_PASSPHRASE,
+        },
+      });
+      fs.writeFileSync('keys/login-public.pem', publicKey);
+      fs.writeFileSync('keys/login-private.pem', privateKey);
+      validatedEnvConfig.LOGIN_PUBLIC_RSA_KEY = crypto.createPublicKey(
+        publicKey,
+      );
+      validatedEnvConfig.LOGIN_PRIVATE_RSA_KEY = crypto.createPrivateKey({
+        key: privateKey,
+        passphrase: validatedEnvConfig.LOGIN_RSA_PASSPHRASE,
+      });
+    } else {
+      const publicKey = fs.readFileSync('keys/login-public.pem').toString();
+      const privateKey = fs.readFileSync('keys/login-private.pem').toString();
+      validatedEnvConfig.LOGIN_PUBLIC_RSA_KEY = crypto.createPublicKey(
+        publicKey,
+      );;
+      validatedEnvConfig.LOGIN_PRIVATE_RSA_KEY = crypto.createPrivateKey({
+        key: privateKey,
+        passphrase: validatedEnvConfig.LOGIN_RSA_PASSPHRASE,
+      });;
     }
     return validatedEnvConfig;
   }

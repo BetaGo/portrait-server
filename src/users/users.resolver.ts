@@ -1,27 +1,30 @@
-import { Args, Query, Resolver, Mutation } from '@nestjs/graphql';
-import { UsersService } from './users.service';
-import { UseGuards, UnauthorizedException } from '@nestjs/common';
-import * as _ from 'lodash';
-import * as bcrypt from 'bcrypt';
+import { UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ApolloError } from 'apollo-server-express';
+import bcrypt from 'bcrypt';
+import { DeepPartial } from 'typeorm';
+
+import { AuthService } from '../auth/auth.service';
 import { GQLAuthGuard } from '../auth/graphql-auth.guard';
-import { UserGQL } from './users.decorator';
-import { User } from './users.entity';
-import { UserWordsService } from './user-words/user-words.service';
+import { ConfigService } from '../config/config.service';
+import { ErrorCode } from '../const';
 import {
-  AddUserWordInput,
-  UpdateUserWordInput,
   AddUserInput,
   AddUserPayload,
+  AddUserWordInput,
+  RefreshTokenInput,
+  RefreshTokenPayload,
+  UpdateResult,
+  UpdateUserInput,
+  UpdateUserWordInput,
   UserLoginInput,
   UserLoginPayload,
-  UpdateUserInput,
-  UpdateResult,
 } from '../graphql.schema';
-import { AuthService } from '../auth/auth.service';
-import { DeepPartial } from 'typeorm';
 import { generateUpdateResult } from '../utils';
-import { ErrorCode } from '../const';
+import { UserWordsService } from './user-words/user-words.service';
+import { UserGQL } from './users.decorator';
+import { User } from './users.entity';
+import { UsersService } from './users.service';
 
 @Resolver('user')
 export class UsersResolver {
@@ -29,7 +32,8 @@ export class UsersResolver {
     private readonly usersService: UsersService,
     private readonly userWordsService: UserWordsService,
     private readonly authService: AuthService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) { }
 
   async checkUserInfo(userData: DeepPartial<User>) {
     const isEmailExist = userData.email
@@ -40,8 +44,8 @@ export class UsersResolver {
 
     const isUsernameExist = userData.username
       ? await this.usersService.isExist({
-          username: userData.username,
-        })
+        username: userData.username,
+      })
       : false;
     if (isUsernameExist)
       throw new ApolloError('用户名已被注册', ErrorCode.TIPS_ERROR);
@@ -49,27 +53,31 @@ export class UsersResolver {
 
   @Mutation('addUser')
   async addUser(@Args('input') input: AddUserInput): Promise<AddUserPayload> {
-    let userData: DeepPartial<User> = { ...input };
+    const userData = input;
     await this.checkUserInfo(userData);
-
-    let password = await bcrypt.hash(userData.password, 10);
+    const parsedPassword = this.authService.parsePassword(userData.password);
+    const password = await bcrypt.hash(parsedPassword.text, 10);
     userData.password = password;
 
     const user = await this.usersService.create(userData);
     const authToken = await this.authService.sign(user);
     return {
       id: user.id,
-      accessToken: authToken.access_token,
+      ...authToken,
     };
   }
 
+  @UseGuards(GQLAuthGuard)
   @Mutation('updateUser')
   async updateUser(
     @Args('input') input: UpdateUserInput,
+    @UserGQL() user: User,
   ): Promise<UpdateResult> {
-    const { id, ...data } = input;
-    await this.checkUserInfo(input);
-    const result = await this.usersService.update(id, data);
+    if (input.password) {
+      const parsedPassword = this.authService.parsePassword(input.password);
+      input.password = await bcrypt.hash(parsedPassword.text, 10);
+    }
+    const result = await this.usersService.update(user.id, input);
     return generateUpdateResult(result);
   }
 
@@ -78,6 +86,11 @@ export class UsersResolver {
     @Args('input') input: UserLoginInput,
   ): Promise<UserLoginPayload> {
     const { account, password } = input;
+    const parsedPassword = this.authService.parsePassword(password);
+    const isTokenRight = await this.authService.consumeLoginToken(parsedPassword.token);
+    if (!isTokenRight) {
+      throw new UnauthorizedException();
+    }
     let user: User | undefined;
     if (account.includes('@')) {
       user = await this.usersService.findOne({
@@ -91,14 +104,40 @@ export class UsersResolver {
     if (!user) {
       throw new UnauthorizedException();
     }
-    const isMatch = bcrypt.compare(password, user.password);
+    const isMatch = bcrypt.compare(parsedPassword.text, user.password);
     if (!isMatch) {
       throw new UnauthorizedException();
     }
-    const token = await this.authService.sign(user);
+    const tokens = await this.authService.sign(user);
+    return tokens;
+  }
+
+  @Query('loginToken')
+  async loginToken() {
+    const token = await this.authService.createLoginToken();
+    const LOGIN_PUBLIC_RSA_KEY = this.configService.get('LOGIN_PUBLIC_RSA_KEY');
     return {
-      accessToken: token.access_token,
+      token,
+      publicKey: this.configService.get('LOGIN_PUBLIC_RSA_KEY').export({
+        format: 'pem',
+        type: 'spki'
+      }).toString()
     };
+  }
+
+  @Query('refreshToken')
+  async refreshToken(
+    @Args('input') input: RefreshTokenInput,
+  ): Promise<RefreshTokenPayload> {
+    const accessTokenPayload = this.authService.parseAccessToken(
+      input.accessToken,
+    );
+    const user = await this.usersService.findOneById(accessTokenPayload.sub);
+    return this.authService.consumeRefreshToken(
+      input.accessToken,
+      input.refreshToken,
+      user,
+    );
   }
 
   @UseGuards(GQLAuthGuard)

@@ -11,29 +11,32 @@ import {
 import { Geolocation } from '../geolocation/geolocation.entity';
 import { UserWord } from './user-words/user-words.entity';
 
-export enum UserDomain {
-  'GITHUB' = 'github.com',
-  'WECHAT' = 'weixin.qq.com',
-  'WEIBO' = 'weibo.com',
-  'MAIN' = 'main',
+export enum ThirdLoginType {
+  'GITHUB' = 'GITHUB',
+  'WEIBO' = 'WEIBO',
 }
 
 @Entity()
-@Unique(['email', 'username'])
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ comment: '第三方登录提供的id' })
-  uid: string;
+  @Column({ default: '', comment: '第三方登录提供的id' })
+  thirdLoginId: string;
 
-  @Column({ length: 32, comment: '用户账号' })
+  @Column({
+    default: '',
+    comment: '第三方登录的类型',
+  })
+  thirdLoginType: string;
+
+  @Column({ length: 32, default: '', comment: '用户账号' })
   username: string;
 
   @Column({ length: 32, comment: '用户昵称' })
   displayName: string;
 
-  @Column()
+  @Column({ default: '' })
   password: string;
 
   @Column({
@@ -45,13 +48,6 @@ export class User {
     default: '',
   })
   avatar: string;
-
-  @Column({
-    type: 'enum',
-    enum: UserDomain,
-    default: UserDomain.MAIN,
-  })
-  domain: UserDomain;
 
   @Column({
     default: '',

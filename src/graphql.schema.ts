@@ -5,10 +5,33 @@
  */
 
 /* tslint:disable */
+/* eslint-disable */
+export class AddUserInput {
+    username: string;
+    displayName: string;
+    password: string;
+    email?: string;
+    avatar?: string;
+    phone?: string;
+}
+
 export class AddUserWordInput {
     word: string;
     translation?: string;
     example?: string;
+}
+
+export class RefreshTokenInput {
+    refreshToken: string;
+    accessToken: string;
+}
+
+export class UpdateUserInput {
+    displayName?: string;
+    email?: string;
+    avatar?: string;
+    phone?: string;
+    password?: string;
 }
 
 export class UpdateUserWordInput {
@@ -20,17 +43,15 @@ export class UpdateUserWordInput {
     rememberTimes?: number;
 }
 
-export class AddUserInput {
-    username: string;
-    displayName: string;
-    email?: string;
-    avatar?: string;
-    phone?: string;
+export class UserLoginInput {
+    account: string;
+    password: string;
 }
 
 export class AddUserPayload {
     id: number;
     accessToken: string;
+    refreshToken: string;
 }
 
 export class AddUserWordPayload {
@@ -46,6 +67,11 @@ export class Geolocation {
     longitude: number;
     altitude: number;
     time: Date;
+}
+
+export class LoginTokenPayload {
+    token: string;
+    publicKey: string;
 }
 
 export abstract class IMutation {
@@ -85,6 +111,15 @@ export abstract class IQuery {
     abstract allUserWords(first: number, after?: string): UserWordsResultCursor | Promise<UserWordsResultCursor>;
 
     abstract allNewWords(first: number, after?: string): NewWordsResultCursor | Promise<NewWordsResultCursor>;
+
+    abstract refreshToken(input?: RefreshTokenInput): RefreshTokenPayload | Promise<RefreshTokenPayload>;
+
+    abstract loginToken(): LoginTokenPayload | Promise<LoginTokenPayload>;
+}
+
+export class RefreshTokenPayload {
+    refreshToken: string;
+    accessToken: string;
 }
 
 export abstract class ISubscription {
@@ -96,28 +131,15 @@ export class UpdateResult {
     message?: string;
 }
 
-export class UpdateUserInput {
-    id: number;
-    displayName?: string;
-    email?: string;
-    avatar?: string;
-    phone?: string;
-}
-
 export class User {
     id: number;
-    uid?: number;
+    thirdLoginId?: string;
     username?: string;
     displayName: string;
     email?: string;
     avatar?: string;
-    domain: string;
+    ThirdLoginType?: string;
     phone?: string;
-}
-
-export class UserLoginInput {
-    account: string;
-    password: string;
 }
 
 export class UserLoginPayload {

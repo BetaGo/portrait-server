@@ -1,17 +1,18 @@
 type User {
   id: Int!
-  uid: Int
+  thirdLoginId: String
   username: String
   displayName: String!
   email: String
   avatar: String
-  domain: String!
+  ThirdLoginType: String
   phone: String
 }
 
-type AddUserInput {
+input AddUserInput {
   username: String!
   displayName: String!
+  password: String!
   email: String
   avatar: String
   phone: String
@@ -20,9 +21,10 @@ type AddUserInput {
 type AddUserPayload {
   id: Int!
   accessToken: String!
+  refreshToken: String!
 }
 
-type UserLoginInput {
+input UserLoginInput {
   account: String!
   password: String!
 }
@@ -31,12 +33,12 @@ type UserLoginPayload {
   accessToken: String!
 }
 
-type UpdateUserInput {
-  id: Int!
+input UpdateUserInput {
   displayName: String
   email: String
   avatar: String
   phone: String
+  password: String
 }
 
 type UserWord {
@@ -92,12 +94,29 @@ type NewWordsResultCursor {
   totalCount: Int!
 }
 
+input RefreshTokenInput {
+  refreshToken: String!
+  accessToken: String!
+}
+
+type RefreshTokenPayload {
+  refreshToken: String!
+  accessToken: String!
+}
+
+type LoginTokenPayload {
+  token: String!
+  publicKey: String!
+}
+
 type Query {
   user: User
   userLogin(input: UserLoginInput): UserLoginPayload
   userWord(word: String!): UserWord
   allUserWords(first: Int!, after: String): UserWordsResultCursor
   allNewWords(first: Int!, after: String): NewWordsResultCursor
+  refreshToken(input: RefreshTokenInput): RefreshTokenPayload
+  loginToken: LoginTokenPayload
 }
 
 type Mutation {

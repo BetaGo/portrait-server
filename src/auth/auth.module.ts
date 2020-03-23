@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
@@ -7,13 +7,12 @@ import { ConfigService } from '../config/config.service';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { GithubStrategy } from './github.strategy';
 import { GQLAuthGuard } from './graphql-auth.guard';
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
-    UsersModule,
+    forwardRef(() => UsersModule),
     ConfigModule,
     PassportModule.register({
       defaultStrategy: 'jwt',
@@ -23,13 +22,13 @@ import { JwtStrategy } from './jwt.strategy';
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('SECRET'),
         signOptions: {
-          expiresIn: '30d',
+          expiresIn: configService.get('JWT_EXPIRES_IN'),
         },
       }),
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, JwtStrategy, GQLAuthGuard, GithubStrategy],
+  providers: [AuthService, JwtStrategy, GQLAuthGuard],
   exports: [AuthService],
   controllers: [AuthController],
 })

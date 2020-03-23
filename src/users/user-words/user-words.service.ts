@@ -8,8 +8,8 @@ import {
   QueryBuilder,
   SelectQueryBuilder,
 } from 'typeorm';
-import * as _ from 'lodash';
-import * as dayjs from 'dayjs';
+import _ from 'lodash';
+import dayjs from 'dayjs';
 import { Cron } from '@nestjs/schedule';
 
 import { User } from '../users.entity';
@@ -53,7 +53,7 @@ export class UserWordsService {
   }
 
   update(id: number, data: DeepPartial<UserWord>) {
-    return this.userWordsRepository.update(id, data);
+    return this.userWordsRepository.update(id, { ...data });
   }
 
   delete(id: number) {

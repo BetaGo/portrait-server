@@ -2,12 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-import * as dotenv from 'dotenv';
-import * as session from 'express-session';
-import * as dotenvExpand from 'dotenv-expand';
+import dotenv from 'dotenv';
+import dotenvExpand from 'dotenv-expand';
 
 import { dotenvFiles } from './config/config.env';
-import * as fs from 'fs';
+import fs from 'fs';
+import { ValidationPipe } from '@nestjs/common';
 
 dotenvFiles.forEach(dotenvFile => {
   if (fs.existsSync(dotenvFile as string)) {
@@ -23,13 +23,7 @@ dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.use(
-    session({
-      secret: 'just use to store auth redirect path',
-      resave: false,
-      saveUninitialized: true,
-    }),
-  );
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
