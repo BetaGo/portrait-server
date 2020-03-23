@@ -33,7 +33,7 @@ export class UsersResolver {
     private readonly userWordsService: UserWordsService,
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   async checkUserInfo(userData: DeepPartial<User>) {
     const isEmailExist = userData.email
@@ -44,8 +44,8 @@ export class UsersResolver {
 
     const isUsernameExist = userData.username
       ? await this.usersService.isExist({
-          username: userData.username,
-        })
+        username: userData.username,
+      })
       : false;
     if (isUsernameExist)
       throw new ApolloError('用户名已被注册', ErrorCode.TIPS_ERROR);
@@ -87,7 +87,7 @@ export class UsersResolver {
   ): Promise<UserLoginPayload> {
     const { account, password } = input;
     const parsedPassword = this.authService.parsePassword(password);
-    const isTokenRight = await this.authService.consumeLoginToken( parsedPassword.token);
+    const isTokenRight = await this.authService.consumeLoginToken(parsedPassword.token);
     if (!isTokenRight) {
       throw new UnauthorizedException();
     }
@@ -115,6 +115,7 @@ export class UsersResolver {
   @Query('loginToken')
   async loginToken() {
     const token = await this.authService.createLoginToken();
+    const LOGIN_PUBLIC_RSA_KEY = this.configService.get('LOGIN_PUBLIC_RSA_KEY');
     return {
       token,
       publicKey: this.configService.get('LOGIN_PUBLIC_RSA_KEY').export({

@@ -125,8 +125,13 @@ export class ConfigService {
     } else {
       const publicKey = fs.readFileSync('keys/login-public.pem').toString();
       const privateKey = fs.readFileSync('keys/login-private.pem').toString();
-      validatedEnvConfig.LOGIN_PUBLIC_RSA_KEY = publicKey;
-      validatedEnvConfig.LOGIN_PRIVATE_RSA_KEY = privateKey;
+      validatedEnvConfig.LOGIN_PUBLIC_RSA_KEY = crypto.createPublicKey(
+        publicKey,
+      );;
+      validatedEnvConfig.LOGIN_PRIVATE_RSA_KEY = crypto.createPrivateKey({
+        key: privateKey,
+        passphrase: validatedEnvConfig.LOGIN_RSA_PASSPHRASE,
+      });;
     }
     return validatedEnvConfig;
   }
