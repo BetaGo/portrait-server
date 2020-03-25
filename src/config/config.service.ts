@@ -93,32 +93,45 @@ export class ConfigService {
     if (error) {
       throw new Error(`Config validation error: ${error.message}`);
     }
-    if (!fs.existsSync('keys/login-public.pem') || !fs.existsSync('keys/login-private.pem')) {
+    if (!fs.existsSync('keys')) {
+      fs.mkdirSync('keys');
+    }
+    if (
+      !fs.existsSync('keys/login-public.pem') ||
+      !fs.existsSync('keys/login-private.pem')
+    ) {
       const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
         modulusLength: 4096,
         publicKeyEncoding: {
           type: 'spki',
-          format: 'pem'
+          format: 'pem',
         },
         privateKeyEncoding: {
           type: 'pkcs8',
           format: 'pem',
           cipher: 'aes-256-cbc',
-          passphrase: validatedEnvConfig.LOGIN_RSA_PASSPHRASE
-        }
+          passphrase: validatedEnvConfig.LOGIN_RSA_PASSPHRASE,
+        },
       });
       fs.writeFileSync('keys/login-public.pem', publicKey);
       fs.writeFileSync('keys/login-private.pem', privateKey);
-      validatedEnvConfig.LOGIN_PUBLIC_RSA_KEY = crypto.createPublicKey(publicKey);
+      validatedEnvConfig.LOGIN_PUBLIC_RSA_KEY = crypto.createPublicKey(
+        publicKey,
+      );
       validatedEnvConfig.LOGIN_PRIVATE_RSA_KEY = crypto.createPrivateKey({
         key: privateKey,
-        passphrase: validatedEnvConfig.LOGIN_RSA_PASSPHRASE
+        passphrase: validatedEnvConfig.LOGIN_RSA_PASSPHRASE,
       });
     } else {
       const publicKey = fs.readFileSync('keys/login-public.pem').toString();
       const privateKey = fs.readFileSync('keys/login-private.pem').toString();
-      validatedEnvConfig.LOGIN_PUBLIC_RSA_KEY = publicKey;
-      validatedEnvConfig.LOGIN_PRIVATE_RSA_KEY = privateKey;
+      validatedEnvConfig.LOGIN_PUBLIC_RSA_KEY = crypto.createPublicKey(
+        publicKey,
+      );;
+      validatedEnvConfig.LOGIN_PRIVATE_RSA_KEY = crypto.createPrivateKey({
+        key: privateKey,
+        passphrase: validatedEnvConfig.LOGIN_RSA_PASSPHRASE,
+      });;
     }
     return validatedEnvConfig;
   }
