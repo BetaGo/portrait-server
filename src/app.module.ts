@@ -22,17 +22,7 @@ import { JwtModule } from '@nestjs/jwt';
       playground: true,
       typePaths: ['./**/*.graphql'],
       installSubscriptionHandlers: true,
-      context: ({ req }) => ({ req }),
-    }),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('SECRET'),
-        signOptions: {
-          expiresIn: '30d',
-        },
-      }),
-      inject: [ConfigService],
+      context: ({ req, res }) => ({ req, res }),
     }),
     AuthModule,
     CommonModule,

@@ -21,11 +21,11 @@ import { ConfigService } from '../config/config.service';
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('SECRET'),
         signOptions: {
-          expiresIn: '30d',
+          expiresIn: configService.get('JWT_EXPIRES_IN'),
         },
       }),
       inject: [ConfigService],
-    })
+    }),
   ],
   providers: [UsersService, UsersResolver, UserWordsService, AuthService],
   exports: [UsersService, UserWordsService],

@@ -69,22 +69,20 @@ export class ConfigService {
       SECRET: Joi.string().required(),
       LOGIN_RSA_PASSPHRASE: Joi.string().required(),
 
-      // 鉴权过期时间配置, 单位毫秒(ms)
+      // 鉴权过期时间配置, 单位秒(s)
       JWT_EXPIRES_IN: Joi.number()
         .integer()
-        .default(30 * 60 * 1000),
+        .default(30 * 60),
       REFRESH_TOKEN_EXPIRES_IN: Joi.number()
         .integer()
-        .default(7 * 24 * 60 * 60 * 1000),
+        .default(7 * 24 * 60 * 60),
       LOGIN_TOKEN_EXPIRES_IN: Joi.number()
         .integer()
-        .default(5 * 60 * 1000),
+        .default(5 * 60),
 
       GITHUB_CLIENT_ID: Joi.string().required(),
       GITHUB_CLIENT_SECRET: Joi.string().required(),
-      GITHUB_CALLBACK_URL: Joi.string()
-        .uri()
-        .required(),
+      GITHUB_CALLBACK_URL: Joi.string().uri().required(),
     });
 
     const { error, value: validatedEnvConfig } = envVarsSchema.validate(
@@ -127,11 +125,11 @@ export class ConfigService {
       const privateKey = fs.readFileSync('keys/login-private.pem').toString();
       validatedEnvConfig.LOGIN_PUBLIC_RSA_KEY = crypto.createPublicKey(
         publicKey,
-      );;
+      );
       validatedEnvConfig.LOGIN_PRIVATE_RSA_KEY = crypto.createPrivateKey({
         key: privateKey,
         passphrase: validatedEnvConfig.LOGIN_RSA_PASSPHRASE,
-      });;
+      });
     }
     return validatedEnvConfig;
   }

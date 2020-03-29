@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { IsNotEmpty, IsUrl, IsIn } from 'class-validator';
 
 export class ThirdLoginDto {
@@ -5,7 +6,10 @@ export class ThirdLoginDto {
   type: 'github' | 'weibo';
 
   @IsNotEmpty()
-  @IsUrl()
+  @IsUrl({
+    protocols: ['http', 'https', 'chrome-extension'],
+    require_tld: false,
+  })
   redirectUrl: string;
 }
 

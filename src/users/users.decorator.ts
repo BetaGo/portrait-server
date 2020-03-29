@@ -1,12 +1,22 @@
-// thanks to grahan
-// https://stackoverflow.com/questions/55269777/nestjs-get-current-user-in-graphql-resolver-authenticated-with-jwt/55270391#55270391
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { createParamDecorator } from '@nestjs/common';
-
-export const User = createParamDecorator((data: string, req) => {
-  return data ? req.user && req.user[data] : req.user;
-});
+export const User = createParamDecorator(
+  (data: string, ctx: ExecutionContext) => {
+    const req = ctx.switchToHttp().getRequest();
+    return data ? req.user && req.user[data] : req.user;
+  },
+);
 
 export const UserGQL = createParamDecorator(
-  (data, [root, args, ctx, info]) => ctx.req.user,
+  (data: string, context: ExecutionContext) => {
+    const ctx = GqlExecutionContext.create(context);
+    const req = ctx.getContext().req;
+    // const req = ctx.switchToHttp().getRequest();
+    return req.user;
+  },
 );
+
+// export const UserGQL = createParamDecorator((data, [root, args, ctx, info]) => {
+//   return ctx.req.user;
+// });

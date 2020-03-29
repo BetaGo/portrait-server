@@ -44,6 +44,24 @@ export class UserWordsService {
     return this.userWordsRepository.save(word);
   }
 
+  async createOrUpdate(data: DeepPartial<UserWord>) {
+    const existedWord = await this.userWordsRepository.findOne({
+      where: {
+        word: data.word,
+        user: data.user,
+      },
+    });
+    if (existedWord) {
+      await this.update(existedWord.id, data);
+      return {
+        ...data,
+        ...existedWord,
+      };
+    } else {
+      return this.create(data);
+    }
+  }
+
   findByWord(user: User, word: string) {
     return this.userWordsRepository.findOne({ user, word });
   }

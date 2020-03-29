@@ -19,6 +19,12 @@ import {
   UpdateUserWordInput,
   UserLoginInput,
   UserLoginPayload,
+  UserWord as UserWordPayload,
+  User as UserPayload,
+  AddUserWordPayload,
+  UserWordsResultCursor,
+  NewWordsResultCursor,
+  LoginTokenPayload,
 } from '../graphql.schema';
 import { generateUpdateResult } from '../utils';
 import { UserWordsService } from './user-words/user-words.service';
@@ -33,7 +39,7 @@ export class UsersResolver {
     private readonly userWordsService: UserWordsService,
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
-  ) { }
+  ) {}
 
   async checkUserInfo(userData: DeepPartial<User>) {
     const isEmailExist = userData.email
@@ -44,8 +50,8 @@ export class UsersResolver {
 
     const isUsernameExist = userData.username
       ? await this.usersService.isExist({
-        username: userData.username,
-      })
+          username: userData.username,
+        })
       : false;
     if (isUsernameExist)
       throw new ApolloError('用户名已被注册', ErrorCode.TIPS_ERROR);
@@ -87,7 +93,9 @@ export class UsersResolver {
   ): Promise<UserLoginPayload> {
     const { account, password } = input;
     const parsedPassword = this.authService.parsePassword(password);
-    const isTokenRight = await this.authService.consumeLoginToken(parsedPassword.token);
+    const isTokenRight = await this.authService.consumeLoginToken(
+      parsedPassword.token,
+    );
     if (!isTokenRight) {
       throw new UnauthorizedException();
     }
@@ -113,15 +121,17 @@ export class UsersResolver {
   }
 
   @Query('loginToken')
-  async loginToken() {
+  async loginToken(): Promise<LoginTokenPayload> {
     const token = await this.authService.createLoginToken();
-    const LOGIN_PUBLIC_RSA_KEY = this.configService.get('LOGIN_PUBLIC_RSA_KEY');
     return {
       token,
-      publicKey: this.configService.get('LOGIN_PUBLIC_RSA_KEY').export({
-        format: 'pem',
-        type: 'spki'
-      }).toString()
+      publicKey: this.configService
+        .get('LOGIN_PUBLIC_RSA_KEY')
+        .export({
+          format: 'pem',
+          type: 'spki',
+        })
+        .toString(),
     };
   }
 
@@ -142,7 +152,7 @@ export class UsersResolver {
 
   @UseGuards(GQLAuthGuard)
   @Query('user')
-  findUser(@UserGQL() user: User) {
+  findUser(@UserGQL() user: User): Promise<UserPayload> {
     return this.usersService.findOneById(user.id);
   }
 
@@ -152,7 +162,7 @@ export class UsersResolver {
     @UserGQL() user: User,
     @Args('word')
     word: string,
-  ) {
+  ): Promise<UserWordPayload> {
     return this.userWordsService.findByWord(user, word);
   }
 
@@ -164,7 +174,7 @@ export class UsersResolver {
     first: number,
     @Args('after')
     after?: string,
-  ) {
+  ): Promise<UserWordsResultCursor> {
     return this.userWordsService.allWordsCursorList(user, first, after);
   }
 
@@ -176,7 +186,7 @@ export class UsersResolver {
     first: number,
     @Args('after')
     after?: string,
-  ) {
+  ): Promise<NewWordsResultCursor> {
     return this.userWordsService.newWordsCursorList(user, first, after);
   }
 
@@ -186,8 +196,8 @@ export class UsersResolver {
     @UserGQL() user: User,
     @Args('input')
     input: AddUserWordInput,
-  ) {
-    return this.userWordsService.create({
+  ): Promise<AddUserWordPayload> {
+    return this.userWordsService.createOrUpdate({
       ...input,
       user,
     });
