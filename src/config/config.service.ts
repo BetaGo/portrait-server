@@ -35,13 +35,18 @@ export class ConfigService {
   private readonly envConfig: EnvConfig;
 
   constructor() {
-    const config = dotenvFiles.reduce((a, b) => {
-      let conf = {};
-      if (fs.existsSync(b as string)) {
-        conf = dotenv.parse(fs.readFileSync(b as string));
-      }
-      return { ...conf, ...a };
-    }, {});
+    const config = dotenvFiles.reduce(
+      (a, b) => {
+        let conf = {};
+        if (fs.existsSync(b as string)) {
+          conf = dotenv.parse(fs.readFileSync(b as string));
+        }
+        return { ...conf, ...a };
+      },
+      {
+        NODE_ENV: process.env.NODE_ENV,
+      },
+    );
     this.envConfig = this.validateInput(config);
   }
 
@@ -54,6 +59,7 @@ export class ConfigService {
    * including the applied default values.
    */
   private validateInput(envConfig: {}): EnvConfig {
+    console.log('=== envConfig', envConfig);
     const envVarsSchema: Joi.ObjectSchema = Joi.object({
       NODE_ENV: Joi.string()
         .valid('development', 'production', 'test', 'provision')
