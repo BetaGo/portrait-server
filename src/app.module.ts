@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
+import { GraphQLModule, GqlModuleOptions } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
@@ -11,18 +11,23 @@ import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { GeolocationModule } from './geolocation/geolocation.module';
 import { UsersModule } from './users/users.module';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     ConfigModule,
     ScheduleModule.forRoot(),
-    GraphQLModule.forRoot({
-      debug: true,
-      playground: true,
-      typePaths: ['./**/*.graphql'],
-      installSubscriptionHandlers: true,
-      context: ({ req, res }) => ({ req, res }),
+    GraphQLModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (
+        configService: ConfigService,
+      ): Promise<GqlModuleOptions> => ({
+        debug: configService.get('NODE_ENV') !== 'production',
+        playground: configService.get('NODE_ENV') !== 'production',
+        typePaths: ['./**/*.graphql'],
+        installSubscriptionHandlers: true,
+        context: ({ req, res }) => ({ req, res }),
+      }),
+      inject: [ConfigService],
     }),
     AuthModule,
     CommonModule,
