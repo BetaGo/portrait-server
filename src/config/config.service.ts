@@ -75,16 +75,18 @@ export class ConfigService {
       SECRET: Joi.string().required(),
       LOGIN_RSA_PASSPHRASE: Joi.string().required(),
 
-      // 鉴权过期时间配置, 单位秒(s)
+      // jwt 鉴权过期时间配置, 单位秒(s)
       JWT_EXPIRES_IN: Joi.number()
         .integer()
         .default(30 * 60),
+
+      // redis 中 key 的过期时间, 单位毫米(ms)
       REFRESH_TOKEN_EXPIRES_IN: Joi.number()
         .integer()
-        .default(7 * 24 * 60 * 60),
+        .default(7 * 24 * 60 * 60 * 1000),
       LOGIN_TOKEN_EXPIRES_IN: Joi.number()
         .integer()
-        .default(5 * 60),
+        .default(5 * 60 * 1000),
 
       GITHUB_CLIENT_ID: Joi.string().required(),
       GITHUB_CLIENT_SECRET: Joi.string().required(),
