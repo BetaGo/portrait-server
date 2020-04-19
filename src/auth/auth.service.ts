@@ -22,7 +22,13 @@ export class AuthService {
 
   parsePassword(encryptedPassword: string): IPassword {
     const privateKey = this.configService.get('LOGIN_PRIVATE_RSA_KEY');
-    const parsedString = crypto.privateDecrypt(privateKey, Buffer.from(encryptedPassword, 'base64'));
+    const parsedString = crypto.privateDecrypt(
+      {
+        key: privateKey,
+        padding: crypto.constants.RSA_PKCS1_PADDING,
+      },
+      Buffer.from(encryptedPassword, 'base64'),
+    );
     const password = JSON.parse(parsedString.toString());
     return password;
   }
@@ -34,7 +40,7 @@ export class AuthService {
   async createLoginToken(): Promise<string> {
     const token = uuidV4();
     await new Promise<string>((resolve, reject) => {
-      this.redis.set(token, '', err => {
+      this.redis.set(token, '', (err) => {
         if (err) reject(err);
         resolve();
       });
@@ -43,7 +49,7 @@ export class AuthService {
       this.redis.pexpire(
         token,
         this.configService.get('LOGIN_TOKEN_EXPIRES_IN'),
-        err => {
+        (err) => {
           if (err) reject(err);
           resolve();
         },
@@ -79,7 +85,7 @@ export class AuthService {
       },
     );
     await new Promise((resolve, reject) => {
-      this.redis.set(accessToken, refreshToken, err => {
+      this.redis.set(accessToken, refreshToken, (err) => {
         if (err) reject(err);
         resolve();
       });
@@ -88,7 +94,7 @@ export class AuthService {
       this.redis.pexpire(
         accessToken,
         this.configService.get('REFRESH_TOKEN_EXPIRES_IN'),
-        err => {
+        (err) => {
           if (err) reject(err);
           resolve();
         },
@@ -110,7 +116,7 @@ export class AuthService {
     });
     if (t && t === refreshToken) {
       await new Promise((resolve, reject) => {
-        this.redis.del(accessToken, err => {
+        this.redis.del(accessToken, (err) => {
           if (err) reject(err);
           resolve();
         });
