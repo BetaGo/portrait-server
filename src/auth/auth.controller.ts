@@ -43,14 +43,15 @@ export class AuthController {
         };
       case 'weibo':
         return {
-          url: 'https://api.weibo.com/oauth2/authorize?' + 
-          qs.stringify({
-            state,
-            scope: 'email',
-            client_id: this.configService.get('WEIBO_CLIENT_ID'),
-            redirect_uri: this.configService.get('WEIBO_CALLBACK_URL'),
-          }),
-        }
+          url:
+            'https://api.weibo.com/oauth2/authorize?' +
+            qs.stringify({
+              state,
+              scope: 'follow_app_official_microblog',
+              client_id: this.configService.get('WEIBO_CLIENT_ID'),
+              redirect_uri: this.configService.get('WEIBO_CALLBACK_URL'),
+            }),
+        };
       default:
         break;
     }

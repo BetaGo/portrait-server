@@ -91,7 +91,7 @@ export class ConfigService {
       GITHUB_CLIENT_ID: Joi.string().required(),
       GITHUB_CLIENT_SECRET: Joi.string().required(),
       GITHUB_CALLBACK_URL: Joi.string().uri().required(),
-    });
+    }).unknown();
 
     const { error, value: validatedEnvConfig } = envVarsSchema.validate(
       envConfig,
