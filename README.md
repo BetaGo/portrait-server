@@ -12,7 +12,7 @@
 ## 目前功能
 
 - [x] 账号登录/注册
-- [x] 第三放登陆接入（GitHub登录）
+- [x] 第三放登陆接入（GitHub登录, weibo登录）
 - [x] jwt 鉴权
 - [x] 自定义 GraphQL 类型
 - [x] GraphQL的 query、mutation、subscription 常用操作
