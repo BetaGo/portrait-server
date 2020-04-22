@@ -55,3 +55,51 @@ export interface IGithubUser {
   two_factor_authentication: boolean;
   plan: IGithubPlan;
 }
+
+export interface IWeiboUser {
+  id: number;
+  screen_name: string;
+  name: string;
+  province: string;
+  city: string;
+  location: string;
+  description: string;
+  url: string;
+  profile_image_url: string;
+  domain: string;
+  gender: string;
+  followers_count: number;
+  friends_count: number;
+  statuses_count: number;
+  favourites_count: number;
+  created_at: string;
+  following: boolean;
+  allow_all_act_msg: boolean;
+  geo_enabled: boolean;
+  email?: string;
+  verified: boolean;
+  status: IWeiboStatus;
+  allow_all_comment: boolean;
+  avatar_large: string;
+  verified_reason: string;
+  follow_me: boolean;
+  online_status: number;
+  bi_followers_count: number;
+}
+
+export interface IWeiboStatus {
+  created_at: string;
+  id: number;
+  text: string;
+  source: string;
+  favorited: boolean;
+  truncated: boolean;
+  in_reply_to_status_id: string;
+  in_reply_to_user_id: string;
+  in_reply_to_screen_name: string;
+  geo?: any;
+  mid: string;
+  annotations: any[];
+  reposts_count: number;
+  comments_count: number;
+}

@@ -41,6 +41,16 @@ export class AuthController {
               redirect_uri: this.configService.get('GITHUB_CALLBACK_URL'),
             }),
         };
+      case 'weibo':
+        return {
+          url: 'https://api.weibo.com/oauth2/authorize?' + 
+          qs.stringify({
+            state,
+            scope: 'email',
+            client_id: this.configService.get('WEIBO_CLIENT_ID'),
+            redirect_uri: this.configService.get('WEIBO_CALLBACK_URL'),
+          }),
+        }
       default:
         break;
     }
@@ -60,6 +70,41 @@ export class AuthController {
         thirdLoginId: String(userInfo.id),
         thirdLoginType: ThirdLoginType.GITHUB,
         avatar: userInfo.avatar_url,
+        displayName: userInfo.name,
+        email: userInfo.email || '',
+      });
+    }
+    if (userInfo.email && !user.email) {
+      await this.usersService.update(user.id, {
+        email: userInfo.email,
+      });
+    }
+    const token = await this.authService.sign(user);
+    const s = Buffer.from(state, 'base64').toString();
+    const url = new Url(s);
+    url.set('query', {
+      ...url.query,
+      ...token,
+    });
+    return {
+      url: url.toString(),
+    };
+  }
+
+  @Get('/weibo')
+  @Redirect('/')
+  async weiboCallback(@Query() data: OAuthCallbackDto) {
+    const { code, state } = data;
+    const userInfo = await this.authService.getUserInfoWeibo(code, state);
+    let user = await this.usersService.findOne({
+      thirdLoginType: ThirdLoginType.WEIBO,
+      thirdLoginId: String(userInfo.id),
+    });
+    if (!user) {
+      user = await this.usersService.create({
+        thirdLoginId: String(userInfo.id),
+        thirdLoginType: ThirdLoginType.WEIBO,
+        avatar: userInfo.avatar_large,
         displayName: userInfo.name,
         email: userInfo.email || '',
       });
