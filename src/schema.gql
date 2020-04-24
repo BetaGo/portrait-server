@@ -1,0 +1,36 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: Int!
+  thirdLoginId: String
+  username: String
+  displayName: String!
+  email: String
+  avatar: String
+  ThirdLoginType: String
+  phone: String
+  createdDate: Date!
+}
+
+"""Date custom scalar type, 13 bit timestamp."""
+scalar Date
+
+type UserTokenPayload {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type Query {
+  user: User!
+}
+
+type Mutation {
+  userLogin(input: UserLoginInput!): UserTokenPayload!
+}
+
+input UserLoginInput {
+  account: String!
+  password: String!
+}

@@ -8,31 +8,15 @@ import { AuthService } from '../auth/auth.service';
 import { GQLAuthGuard } from '../auth/graphql-auth.guard';
 import { ConfigService } from '../config/config.service';
 import { ErrorCode } from '../const';
-import {
-  AddUserInput,
-  AddUserPayload,
-  AddUserWordInput,
-  RefreshTokenInput,
-  RefreshTokenPayload,
-  UpdateResult,
-  UpdateUserInput,
-  UpdateUserWordInput,
-  UserLoginInput,
-  UserLoginPayload,
-  UserWord as UserWordPayload,
-  User as UserPayload,
-  AddUserWordPayload,
-  UserWordsResultCursor,
-  NewWordsResultCursor,
-  LoginTokenPayload,
-} from '../graphql.schema';
 import { generateUpdateResult } from '../utils';
 import { UserWordsService } from './user-words/user-words.service';
 import { UserGQL } from './users.decorator';
-import { User } from './users.entity';
 import { UsersService } from './users.service';
+import { User } from './models/user.model'
+import { User as UserEntity} from './users.entity';
+import { UserLoginInput, UserTokenPayload } from './models/user-login.model';
 
-@Resolver('user')
+@Resolver(of => User)
 export class UsersResolver {
   constructor(
     private readonly usersService: UsersService,
@@ -41,7 +25,7 @@ export class UsersResolver {
     private readonly configService: ConfigService,
   ) {}
 
-  async checkUserInfo(userData: DeepPartial<User>) {
+  async checkUserInfo(userData: DeepPartial<UserEntity>) {
     const isEmailExist = userData.email
       ? await this.usersService.isExist({ email: userData.email })
       : false;
@@ -55,6 +39,12 @@ export class UsersResolver {
       : false;
     if (isUsernameExist)
       throw new ApolloError('用户名已被注册', ErrorCode.TIPS_ERROR);
+  }
+
+  @UseGuards(GQLAuthGuard)
+  @Query(returns => User)
+  async user(@UserGQL() user: UserEntity): Promise<User> {
+    return this.usersService.findOneById(user.id);
   }
 
   @Mutation('addUser')
@@ -73,24 +63,10 @@ export class UsersResolver {
     };
   }
 
-  @UseGuards(GQLAuthGuard)
-  @Mutation('updateUser')
-  async updateUser(
-    @Args('input') input: UpdateUserInput,
-    @UserGQL() user: User,
-  ): Promise<UpdateResult> {
-    if (input.password) {
-      const parsedPassword = this.authService.parsePassword(input.password);
-      input.password = await bcrypt.hash(parsedPassword.text, 10);
-    }
-    const result = await this.usersService.update(user.id, input);
-    return generateUpdateResult(result);
-  }
-
-  @Query('userLogin')
+  @Mutation(returns => UserTokenPayload)
   async userLogin(
-    @Args('input') input: UserLoginInput,
-  ): Promise<UserLoginPayload> {
+    @Args('input') input: UserLoginInput
+  ): Promise<UserTokenPayload> {
     const { account, password } = input;
     const parsedPassword = this.authService.parsePassword(password);
     const isTokenRight = await this.authService.consumeLoginToken(
@@ -99,7 +75,7 @@ export class UsersResolver {
     if (!isTokenRight) {
       throw new UnauthorizedException();
     }
-    let user: User | undefined;
+    let user: UserEntity | undefined;
     if (account.includes('@')) {
       user = await this.usersService.findOne({
         email: account,
@@ -120,100 +96,5 @@ export class UsersResolver {
     return tokens;
   }
 
-  @Query('loginToken')
-  async loginToken(): Promise<LoginTokenPayload> {
-    const token = await this.authService.createLoginToken();
-    return {
-      token,
-      publicKey: this.configService
-        .get('LOGIN_PUBLIC_RSA_KEY')
-        .export({
-          format: 'pem',
-          type: 'spki',
-        })
-        .toString(),
-    };
-  }
 
-  @Query('refreshToken')
-  async refreshToken(
-    @Args('input') input: RefreshTokenInput,
-  ): Promise<RefreshTokenPayload> {
-    const accessTokenPayload = this.authService.parseAccessToken(
-      input.accessToken,
-    );
-    const user = await this.usersService.findOneById(accessTokenPayload.sub);
-    return this.authService.consumeRefreshToken(
-      input.accessToken,
-      input.refreshToken,
-      user,
-    );
-  }
-
-  @UseGuards(GQLAuthGuard)
-  @Query('user')
-  findUser(@UserGQL() user: User): Promise<UserPayload> {
-    return this.usersService.findOneById(user.id);
-  }
-
-  @UseGuards(GQLAuthGuard)
-  @Query('userWord')
-  findUserWord(
-    @UserGQL() user: User,
-    @Args('word')
-    word: string,
-  ): Promise<UserWordPayload> {
-    return this.userWordsService.findByWord(user, word);
-  }
-
-  @UseGuards(GQLAuthGuard)
-  @Query('allUserWords')
-  findUserWords(
-    @UserGQL() user: User,
-    @Args('first')
-    first: number,
-    @Args('after')
-    after?: string,
-  ): Promise<UserWordsResultCursor> {
-    return this.userWordsService.allWordsCursorList(user, first, after);
-  }
-
-  @UseGuards(GQLAuthGuard)
-  @Query('allNewWords')
-  findAllNewWords(
-    @UserGQL() user: User,
-    @Args('first')
-    first: number,
-    @Args('after')
-    after?: string,
-  ): Promise<NewWordsResultCursor> {
-    return this.userWordsService.newWordsCursorList(user, first, after);
-  }
-
-  @UseGuards(GQLAuthGuard)
-  @Mutation('addUserWord')
-  addUserWord(
-    @UserGQL() user: User,
-    @Args('input')
-    input: AddUserWordInput,
-  ): Promise<AddUserWordPayload> {
-    return this.userWordsService.createOrUpdate({
-      ...input,
-      user,
-    });
-  }
-
-  @UseGuards(GQLAuthGuard)
-  @Mutation('updateUserWord')
-  async updateUserWord(
-    @UserGQL() user: User,
-    @Args('input')
-    input: UpdateUserWordInput,
-  ): Promise<UpdateResult> {
-    const updateResult = await this.userWordsService.update(input.id, {
-      ...input,
-      user,
-    });
-    return generateUpdateResult(updateResult);
-  }
 }
