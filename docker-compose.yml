@@ -9,9 +9,11 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
+    command: yarn start:dev
+    environment:
+      NODE_ENV: development
     ports:
       - ${PORT}:${PORT}
-    command: yarn start:dev
     env_file:
       - .env
     networks:
