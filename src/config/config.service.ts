@@ -15,6 +15,9 @@ export interface EnvConfig {
   DATABASE_HOST: string;
   DATABASE_PORT: number;
 
+  REDIS_HOST: string;
+  REDIS_PORT: number;
+
   SECRET: string;
   LOGIN_RSA_PASSPHRASE: string;
 
@@ -71,6 +74,9 @@ export class ConfigService {
       DATABASE_NAME: Joi.string().required(),
       DATABASE_HOST: Joi.string().required(),
       DATABASE_PORT: Joi.number().default(3306),
+
+      REDIS_HOST: Joi.string().default('127.0.0.1'),
+      REDIS_PORT: Joi.number().default(6379),
 
       SECRET: Joi.string().required(),
       LOGIN_RSA_PASSPHRASE: Joi.string().required(),

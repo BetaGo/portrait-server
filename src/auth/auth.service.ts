@@ -23,7 +23,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {
-    this.redis = redis.createClient();
+    this.redis = redis.createClient({
+      host: this.configService.get('REDIS_HOST'),
+      port: this.configService.get('REDIS_PORT'),
+    });
   }
 
   parsePassword(encryptedPassword: string): IPassword {
