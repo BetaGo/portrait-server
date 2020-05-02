@@ -23,16 +23,20 @@ import { UsersModule } from './users/users.module';
       ): Promise<GqlModuleOptions> => ({
         debug: configService.get('NODE_ENV') !== 'production',
         playground: configService.get('NODE_ENV') !== 'production',
-        typePaths: ['./**/*.graphql'],
+        // typePaths: ['./**/*.graphql'],
+        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         installSubscriptionHandlers: true,
         context: ({ req, res }) => ({ req, res }),
+        buildSchemaOptions: {
+          dateScalarMode: 'timestamp',
+        },
       }),
       inject: [ConfigService],
     }),
     AuthModule,
     CommonModule,
     UsersModule,
-    GeolocationModule,
+    // GeolocationModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (

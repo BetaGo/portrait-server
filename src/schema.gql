@@ -1,0 +1,132 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input AddUserInput {
+  username: String!
+  password: String!
+  displayName: String!
+  email: String
+  avatar: String
+  phone: String
+}
+
+input AddUserWordInput {
+  word: String!
+  translation: String
+  example: String
+}
+
+type AddUserWordPayload {
+  word: String!
+  translation: String!
+  example: String!
+  forgottenTimes: Int!
+  rememberTimes: Int!
+
+  """0: false; 1: true"""
+  isKnown: Int!
+  createdDate: Date!
+  updatedDate: Date!
+  id: Int!
+}
+
+type AuthorizationToken {
+  accessToken: String!
+  refreshToken: String!
+}
+
+"""Date custom scalar type, 13 bit timestamp."""
+scalar Date
+
+type EncryptTokenPayload {
+  token: String!
+  publicKey: String!
+}
+
+type Mutation {
+  addUser(input: AddUserInput!): User!
+  updateUser(input: UpdateUserInput!): UpdateResult!
+  addUserWord(input: AddUserWordInput!): AddUserWordPayload!
+  updateUserWord(input: UpdateUserWordInput!): UpdateResult!
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+}
+
+type Query {
+  userLogin(input: UserLoginInput!): AuthorizationToken!
+  encryptToken: EncryptTokenPayload!
+  refreshToken(input: RefreshTokenInput!): AuthorizationToken!
+  findUser: User!
+  findUserWord(word: String!): UserWord!
+  findUserWords(after: String!, first: Float!): UserWordsPaginated!
+  findAllNewWords(after: String!, first: Float!): UserWordsPaginated!
+}
+
+input RefreshTokenInput {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type UpdateResult {
+  success: Boolean!
+  message: String
+}
+
+input UpdateUserInput {
+  password: String!
+  displayName: String!
+  email: String
+  avatar: String
+  phone: String
+}
+
+input UpdateUserWordInput {
+  word: String
+  translation: String
+  example: String
+  id: Int!
+}
+
+type User {
+  id: Int!
+  thirdLoginId: String!
+  thirdLoginType: String!
+  username: String!
+  displayName: String!
+  email: String!
+  avatar: String!
+  phone: String!
+}
+
+input UserLoginInput {
+  account: String!
+  password: String!
+}
+
+type UserWord {
+  word: String!
+  translation: String!
+  example: String!
+  forgottenTimes: Int!
+  rememberTimes: Int!
+
+  """0: false; 1: true"""
+  isKnown: Int!
+  createdDate: Date!
+  updatedDate: Date!
+}
+
+type UserWordEdge {
+  cursor: String!
+  node: UserWord!
+}
+
+type UserWordsPaginated {
+  edges: [UserWordEdge!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}

@@ -12,7 +12,7 @@ import {
 import { User } from '../users.entity';
 
 @Entity()
-@Unique(['word'])
+@Unique(['word', 'user'])
 export class UserWord {
   @PrimaryGeneratedColumn()
   id: number;
@@ -38,15 +38,19 @@ export class UserWord {
   @Column({ type: 'int', comment: '单词经验值', default: 0 })
   exp: number;
 
+  @Column({
+    type: 'tinyint',
+    comment: '是否已掌握, 0: 未掌握, 1: 已掌握',
+    default: 0,
+  })
+  isKnown: number;
+
   @CreateDateColumn()
   createdDate: Date;
 
   @UpdateDateColumn()
   updatedDate: Date;
 
-  @ManyToOne(
-    type => User,
-    user => user.words,
-  )
+  @ManyToOne((type) => User, (user) => user.words)
   user: User;
 }

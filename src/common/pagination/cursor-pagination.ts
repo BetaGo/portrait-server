@@ -1,3 +1,5 @@
+import { Type } from '@nestjs/common';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { SelectQueryBuilder } from 'typeorm';
 
 export interface IPagination {
@@ -24,7 +26,7 @@ export class CursorPagination {
     first?: number,
     after?: string,
   ) {
-    let qb = queryBuilder;
+    const qb = queryBuilder;
     if (first) {
       if (first < 0) {
         throw new Error('first must be positive');
@@ -63,4 +65,38 @@ export class CursorPagination {
     };
     return result;
   }
+}
+
+export function Paginated<T>(classRef: Type<T>) {
+  @ObjectType(`${classRef.name}Edge`)
+  abstract class EdgeType {
+    @Field()
+    cursor: string;
+
+    @Field((type) => classRef)
+    node: T;
+  }
+
+  @ObjectType({ isAbstract: true })
+  abstract class PaginatedType {
+    @Field((type) => [EdgeType], { nullable: true })
+    edges: EdgeType[];
+
+    @Field()
+    pageInfo: PageInfo;
+
+    @Field((type) => Int)
+    totalCount: number;
+  }
+
+  return PaginatedType;
+}
+
+@ObjectType()
+export class PageInfo {
+  @Field({ nullable: true })
+  endCursor?: string;
+
+  @Field()
+  hasNextPage: boolean;
 }

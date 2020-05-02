@@ -1,21 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import {
-  DeepPartial,
-  FindManyOptions,
-  MoreThan,
-  Repository,
-  QueryBuilder,
-  SelectQueryBuilder,
-} from 'typeorm';
-import _ from 'lodash';
-import dayjs from 'dayjs';
 import { Cron } from '@nestjs/schedule';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 
+import { CursorPagination } from '../../common/pagination/cursor-pagination';
 import { User } from '../users.entity';
 import { UserWord } from './user-words.entity';
-import { CursorPagination } from '../../common/pagination/cursor-pagination';
-import { ILockDatePagination } from './user-words.interface';
 
 @Injectable()
 export class UserWordsService {
