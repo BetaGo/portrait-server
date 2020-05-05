@@ -149,21 +149,27 @@ export class UsersResolver {
       input.accessToken,
     );
     const user = await this.usersService.findOneById(accessTokenPayload.sub);
-    return this.authService.consumeRefreshToken(
-      input.accessToken,
-      input.refreshToken,
-      user,
-    );
+
+    try {
+      const token = await this.authService.consumeRefreshToken(
+        input.accessToken,
+        input.refreshToken,
+        user,
+      );
+      return token;
+    } catch (error) {
+      throw new UnauthorizedException();
+    }
   }
 
   @UseGuards(GQLAuthGuard)
-  @Query((returns) => userModels.User)
+  @Query((returns) => userModels.User, { name: 'user' })
   findUser(@UserGQL() user: User): userModels.User {
     return user;
   }
 
   @UseGuards(GQLAuthGuard)
-  @Query((returns) => userWordsModels.UserWord)
+  @Query((returns) => userWordsModels.UserWord, { name: 'userWord' })
   findUserWord(
     @UserGQL() user: User,
     @Args('word')

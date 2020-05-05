@@ -60,8 +60,8 @@ type Query {
   userLogin(input: UserLoginInput!): AuthorizationToken!
   encryptToken: EncryptTokenPayload!
   refreshToken(input: RefreshTokenInput!): AuthorizationToken!
-  findUser: User!
-  findUserWord(word: String!): UserWord!
+  user: User!
+  userWord(word: String!): UserWord!
   findUserWords(after: String!, first: Float!): UserWordsPaginated!
   findAllNewWords(after: String!, first: Float!): UserWordsPaginated!
 }
