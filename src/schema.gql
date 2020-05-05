@@ -45,7 +45,7 @@ type EncryptTokenPayload {
 }
 
 type Mutation {
-  addUser(input: AddUserInput!): User!
+  addUser(input: AddUserInput!): AuthorizationToken!
   updateUser(input: UpdateUserInput!): UpdateResult!
   addUserWord(input: AddUserWordInput!): AddUserWordPayload!
   updateUserWord(input: UpdateUserWordInput!): UpdateResult!

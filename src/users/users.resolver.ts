@@ -64,7 +64,7 @@ export class UsersResolver {
       throw new ApolloError('用户名已被注册', ErrorCode.TIPS_ERROR);
   }
 
-  @Mutation((returns) => userModels.User)
+  @Mutation((returns) => userModels.AuthorizationToken)
   async addUser(
     @Args('input') input: userModels.AddUserInput,
   ): Promise<userModels.AuthorizationToken> {
