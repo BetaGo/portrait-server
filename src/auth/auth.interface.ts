@@ -34,11 +34,11 @@ export interface IGithubUser {
   received_events_url: string;
   type: string;
   site_admin: boolean;
-  name: string;
+  name?: string;
   company: string;
   blog: string;
   location: string;
-  email: string;
+  email?: string;
   hireable: boolean;
   bio: string;
   public_repos: number;

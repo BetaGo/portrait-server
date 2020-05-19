@@ -70,8 +70,8 @@ export class AuthController {
       user = await this.usersService.create({
         thirdLoginId: String(userInfo.id),
         thirdLoginType: ThirdLoginType.GITHUB,
-        avatar: userInfo.avatar_url,
-        displayName: userInfo.name,
+        avatar: userInfo.avatar_url || '',
+        displayName: userInfo.name || userInfo.login,
         email: userInfo.email || '',
       });
     }
