@@ -1,4 +1,4 @@
-version: "3.7"
+version: '3.7'
 
 services:
   main:
@@ -32,8 +32,6 @@ services:
     image: mysql:5.7
     networks:
       - webnet
-    volumes:
-      - db_data:/var/lib/mysql
     restart: always
     ports:
       - 3306:${DATABASE_PORT}
@@ -44,5 +42,3 @@ services:
       MYSQL_PASSWORD: ${DATABASE_PASSWORD}
 networks:
   webnet:
-volumes:
-  db_data: {}
