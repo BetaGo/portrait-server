@@ -23,6 +23,7 @@ type AddUserWordPayload {
   example: String!
   forgottenTimes: Int!
   rememberTimes: Int!
+  exp: Int!
 
   """0: false; 1: true"""
   isKnown: Int!
@@ -61,7 +62,7 @@ type Query {
   encryptToken: EncryptTokenPayload!
   refreshToken(input: RefreshTokenInput!): AuthorizationToken!
   user: User!
-  userWord(word: String!): UserWord!
+  userWord(word: String!): UserWord
   findUserWords(after: String!, first: Float!): UserWordsPaginated!
   findAllNewWords(after: String!, first: Float!): UserWordsPaginated!
 }
@@ -113,6 +114,7 @@ type UserWord {
   example: String!
   forgottenTimes: Int!
   rememberTimes: Int!
+  exp: Int!
 
   """0: false; 1: true"""
   isKnown: Int!

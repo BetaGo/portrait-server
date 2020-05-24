@@ -25,6 +25,9 @@ export class UserWord {
   @Field((type) => Int)
   rememberTimes: number;
 
+  @Field((type) => Int)
+  exp: number;
+
   @Field((type) => Int, { description: '0: false; 1: true' })
   isKnown: number;
 

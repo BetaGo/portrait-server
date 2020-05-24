@@ -169,7 +169,10 @@ export class UsersResolver {
   }
 
   @UseGuards(GQLAuthGuard)
-  @Query((returns) => userWordsModels.UserWord, { name: 'userWord' })
+  @Query((returns) => userWordsModels.UserWord, {
+    name: 'userWord',
+    nullable: true,
+  })
   findUserWord(
     @UserGQL() user: User,
     @Args('word')
