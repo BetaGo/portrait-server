@@ -118,7 +118,7 @@ export class UsersResolver {
     if (!user) {
       throw new UnauthorizedException();
     }
-    const isMatch = bcrypt.compare(parsedPassword.text, user.password);
+    const isMatch = await bcrypt.compare(parsedPassword.text, user.password);
     if (!isMatch) {
       throw new UnauthorizedException();
     }
