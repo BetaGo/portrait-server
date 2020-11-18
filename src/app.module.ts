@@ -51,6 +51,9 @@ import { UsersModule } from './users/users.module';
         entities: [join(__dirname, '**/**.entity{.ts,.js}')],
         synchronize: true,
         logging: true,
+        extra: {
+          charset: 'utf8mb4_unicode_ci',
+        },
       }),
       inject: [ConfigService],
     }),
