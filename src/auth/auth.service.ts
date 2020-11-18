@@ -86,7 +86,7 @@ export class AuthService {
     return false;
   }
 
-  async createRefreshToken(accessToken: string) {
+  async createRefreshToken(accessToken: string): Promise<string> {
     const refreshToken = this.jwtService.sign(
       {},
       {

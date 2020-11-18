@@ -1,5 +1,6 @@
 import {
   Field,
+  ID,
   InputType,
   Int,
   ObjectType,
@@ -10,6 +11,9 @@ import { Paginated } from '../../common/pagination/cursor-pagination';
 
 @ObjectType()
 export class UserWord {
+  @Field((type) => Int)
+  id: number;
+
   @Field()
   word: string;
 
@@ -60,6 +64,12 @@ export class AddUserWordPayload extends UserWord {
 export class UpdateUserWordInput extends PartialType(AddUserWordInput) {
   @Field((type) => Int)
   id: number;
+
+  @Field((type) => Int, { nullable: true })
+  forgottenTimes: number;
+
+  @Field((type) => Int, { nullable: true })
+  rememberTimes: number;
 }
 
 @ObjectType()

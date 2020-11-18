@@ -2,94 +2,9 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-input AddUserInput {
-  username: String!
-  password: String!
-  displayName: String!
-  email: String
-  avatar: String
-  phone: String
-}
-
-input AddUserWordInput {
-  word: String!
-  translation: String
-  example: String
-}
-
-type AddUserWordPayload {
-  word: String!
-  translation: String!
-  example: String!
-  forgottenTimes: Int!
-  rememberTimes: Int!
-  exp: Int!
-
-  """0: false; 1: true"""
-  isKnown: Int!
-  createdDate: Date!
-  updatedDate: Date!
-  id: Int!
-}
-
-type AuthorizationToken {
-  accessToken: String!
-  refreshToken: String!
-}
-
-"""Date custom scalar type, 13 bit timestamp."""
-scalar Date
-
-type EncryptTokenPayload {
-  token: String!
-  publicKey: String!
-}
-
-type Mutation {
-  addUser(input: AddUserInput!): AuthorizationToken!
-  updateUser(input: UpdateUserInput!): UpdateResult!
-  addUserWord(input: AddUserWordInput!): AddUserWordPayload!
-  updateUserWord(input: UpdateUserWordInput!): UpdateResult!
-}
-
 type PageInfo {
   endCursor: String
   hasNextPage: Boolean!
-}
-
-type Query {
-  userLogin(input: UserLoginInput!): AuthorizationToken!
-  encryptToken: EncryptTokenPayload!
-  refreshToken(input: RefreshTokenInput!): AuthorizationToken!
-  user: User!
-  userWord(word: String!): UserWord
-  findUserWords(after: String!, first: Float!): UserWordsPaginated!
-  findAllNewWords(after: String!, first: Float!): UserWordsPaginated!
-}
-
-input RefreshTokenInput {
-  accessToken: String!
-  refreshToken: String!
-}
-
-type UpdateResult {
-  success: Boolean!
-  message: String
-}
-
-input UpdateUserInput {
-  password: String!
-  displayName: String!
-  email: String
-  avatar: String
-  phone: String
-}
-
-input UpdateUserWordInput {
-  word: String
-  translation: String
-  example: String
-  id: Int!
 }
 
 type User {
@@ -103,12 +18,41 @@ type User {
   phone: String!
 }
 
-input UserLoginInput {
-  account: String!
-  password: String!
+type AuthorizationToken {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type EncryptTokenPayload {
+  token: String!
+  publicKey: String!
+}
+
+type UpdateResult {
+  success: Boolean!
+  message: String
 }
 
 type UserWord {
+  id: Int!
+  word: String!
+  translation: String!
+  example: String!
+  forgottenTimes: Int!
+  rememberTimes: Int!
+  exp: Int!
+
+  """0: false; 1: true"""
+  isKnown: Int!
+  createdDate: Date!
+  updatedDate: Date!
+}
+
+"""Date custom scalar type, 13 bit timestamp."""
+scalar Date
+
+type AddUserWordPayload {
+  id: Int!
   word: String!
   translation: String!
   example: String!
@@ -131,4 +75,63 @@ type UserWordsPaginated {
   edges: [UserWordEdge!]
   pageInfo: PageInfo!
   totalCount: Int!
+}
+
+type Query {
+  userLogin(input: UserLoginInput!): AuthorizationToken!
+  encryptToken: EncryptTokenPayload!
+  refreshToken(input: RefreshTokenInput!): AuthorizationToken!
+  user: User!
+  userWord(word: String!): UserWord
+  allUserWords(after: String, first: Int!): UserWordsPaginated!
+  allNewWords(after: String, first: Int!): UserWordsPaginated!
+}
+
+input UserLoginInput {
+  account: String!
+  password: String!
+}
+
+input RefreshTokenInput {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type Mutation {
+  addUser(input: AddUserInput!): AuthorizationToken!
+  updateUser(input: UpdateUserInput!): UpdateResult!
+  addUserWord(input: AddUserWordInput!): AddUserWordPayload!
+  updateUserWord(input: UpdateUserWordInput!): UpdateResult!
+}
+
+input AddUserInput {
+  username: String!
+  password: String!
+  displayName: String!
+  email: String
+  avatar: String
+  phone: String
+}
+
+input UpdateUserInput {
+  password: String!
+  displayName: String!
+  email: String
+  avatar: String
+  phone: String
+}
+
+input AddUserWordInput {
+  word: String!
+  translation: String
+  example: String
+}
+
+input UpdateUserWordInput {
+  word: String
+  translation: String
+  example: String
+  id: Int!
+  forgottenTimes: Int
+  rememberTimes: Int
 }

@@ -1,5 +1,5 @@
 import { UnauthorizedException, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ApolloError } from 'apollo-server-express';
 import bcrypt from 'bcrypt';
 import { DeepPartial } from 'typeorm';
@@ -182,24 +182,28 @@ export class UsersResolver {
   }
 
   @UseGuards(GQLAuthGuard)
-  @Query((returns) => userWordsModels.UserWordsPaginated)
+  @Query((returns) => userWordsModels.UserWordsPaginated, {
+    name: 'allUserWords',
+  })
   findUserWords(
     @UserGQL() user: User,
-    @Args('first')
+    @Args('first', { type: () => Int })
     first: number,
-    @Args('after')
+    @Args('after', { nullable: true })
     after?: string,
   ): Promise<userWordsModels.UserWordsPaginated> {
     return this.userWordsService.allWordsCursorList(user, first, after);
   }
 
   @UseGuards(GQLAuthGuard)
-  @Query((returns) => userWordsModels.UserWordsPaginated)
+  @Query((returns) => userWordsModels.UserWordsPaginated, {
+    name: 'allNewWords',
+  })
   findAllNewWords(
     @UserGQL() user: User,
-    @Args('first')
+    @Args('first', { type: () => Int })
     first: number,
-    @Args('after')
+    @Args('after', { nullable: true })
     after?: string,
   ): Promise<userWordsModels.UserWordsPaginated> {
     return this.userWordsService.newWordsCursorList(user, first, after);
