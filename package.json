@@ -52,7 +52,7 @@
     "rxjs": "^6.3.3",
     "type-graphql": "^1.1.1",
     "typeorm": "^0.2.18",
-    "url-parse": "^1.4.7",
+    "url-parse": "^1.5.9",
     "uuid": "^8.3.1"
   },
   "devDependencies": {
